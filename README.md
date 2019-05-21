@@ -2,12 +2,13 @@
 
 FinTS Connector for ERPNext (Germany)
 
-This app allows to import bank information from german banks into ERPNext.
+This app allows to import bank information from german banks into ERPNext.\
 This project is a "Proof of Concept" (PoC). The app currently allows to import "received" payment entries.
-The goal of this project is to provide a stable and revision prove solution to sync ERPNext with outside data.
+The goal is to provide a stable and revision prove solution to sync (German) bank information with ERPNext with.\
+Best-case scenario: the functionality gets integrated into ERPNext as regional feature.
 
 ## Requirements
-Python 3.4 <
+Python 3.4 <\
 [Python FinTS](https://github.com/raphaelm/python-fints) (will be installed)
 
 ## Installation

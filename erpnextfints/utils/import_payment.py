@@ -36,8 +36,7 @@ class ImportPaymentEntry:
         total_items = len(fints_transaction)
 
         for idx,t in enumerate(fints_transaction):
-
-            if t["status"].lower() == "c":
+            if t["status"].lower() == "c" and float(t["amount"]["amount"])  > 0:
                 amount = float(t["amount"]["amount"])
                 customerMapping = t["applicant_name"]
                 uniquestr = "{0},{1},{2},{3},{4}".format(

@@ -69,9 +69,6 @@ class FinTSConnection:
         return self.__get_fints_account_by_property("accountnumber",account_nr)
 
     def get_fints_transactions(self, start_date=None, end_date=None):
-        if start_date is None:
-            if self.fints_login.from_date:
-                start_date = self.fints_login.from_date
 
         account = self.get_fints_account_by_iban(self.fints_login.account_nr)
         return frappe.json.loads(

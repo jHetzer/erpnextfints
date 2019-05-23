@@ -45,6 +45,13 @@ def import_transactions(docname, fints_login, debug=False):
                 len(importer.payment_entries)
 			))
             #frappe.msgprint(frappe.as_json(importer.payment_entries))
+        if(len(tansactions) >= 2):
+            curr_doc.start_date = tansactions[0]["date"]
+            curr_doc.end_date = tansactions[-1]["date"]
+        elif(len(tansactions) == 1):
+            curr_doc.start_date = tansactions[0]["date"]
+            curr_doc.end_date = tansactions[0]["date"]
+
         if debug:
             frappe.db.rollback()
         else:

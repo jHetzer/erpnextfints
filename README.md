@@ -22,9 +22,9 @@ Python 3.4 <\
  - [x] FinTS Login
  - [x] Basic FinTS Import
  - [x] Save data as JSON and attach it
+ - [x] Add import scheduler
  - [ ] Improve import logs
  - [ ] Improve progress display
- - [ ] Add import scheduler
  - [ ] Legal way to publish/get FinTS URL's
  [https://www.hbci-zka.de/register/bedingungen_bankenliste.htm](https://www.hbci-zka.de/register/bedingungen_bankenliste.htm)
  - [ ] Support 'Pay' payment entry type

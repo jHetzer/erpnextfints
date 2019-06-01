@@ -5,7 +5,8 @@
 from __future__ import unicode_literals
 from frappe import _
 from frappe.model.document import Document
-from datetime import datetime
+from dateutil.relativedelta import relativedelta
+from frappe.utils import now_datetime
 from fints.client import FinTS3PinTanClient
 import frappe
 import mt940
@@ -69,7 +70,8 @@ class FinTSConnection:
         return self.__get_fints_account_by_property("accountnumber",account_nr)
 
     def get_fints_transactions(self, start_date=None, end_date=None):
-
+        if end_date is None:
+            end_date = now_datetime().date() - relativedelta(days=1)
         account = self.get_fints_account_by_iban(self.fints_login.account_nr)
         return frappe.json.loads(
             frappe.json.dumps(

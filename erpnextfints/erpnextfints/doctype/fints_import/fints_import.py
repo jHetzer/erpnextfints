@@ -6,13 +6,33 @@ from __future__ import unicode_literals
 import frappe
 from frappe import _
 from frappe.model.document import Document
+from frappe.utils import now_datetime, get_datetime
 from erpnextfints.utils.fints_wrapper import FinTSConnection
 from erpnextfints.utils.import_payment import ImportPaymentEntry
 from frappe.utils.file_manager import save_file
 import json
 
 class FinTSImport(Document):
-    pass
+    def validate_past(self, date):
+        if isinstance(date, str):
+            date = get_datetime(date).date()
+        if date >= now_datetime().date():
+            return False
+        else:
+            return True
+    def before_save(self):
+        if self.from_date is not None:
+            if not self.validate_past(self.from_date):
+                frappe.msgprint(_("'From Date' needs to be in the past"))
+            if self.to_date is not None:
+                if get_datetime(self.from_date).date() > get_datetime(self.to_date).date():
+                    frappe.msgprint(_("'From Date' needs to be further in the past then 'To Date'"))
+        if self.to_date is not None:
+            if not self.validate_past(self.to_date):
+                frappe.msgprint(_("'To Date' needs to be in the past"))
+
+    def before_submit(self):
+        self.before_save()
 
 @frappe.whitelist()
 def import_transactions(docname, fints_login, debug=False):

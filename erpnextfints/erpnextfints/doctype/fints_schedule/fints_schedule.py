@@ -7,7 +7,7 @@ import frappe
 from frappe.model.document import Document
 import json
 from dateutil.relativedelta import relativedelta
-from datetime import datetime
+from frappe.utils import now_datetime
 import erpnextfints.erpnextfints.doctype.fints_import.fints_import as fin_imp
 # from erpnextfints.utils.fints_wrapper import FinTSConnection
 
@@ -29,10 +29,10 @@ def import_fints_payments(manual=None):
                     filters={
                         'fints_login':child_item.fints_login,
                         'docstatus': 1,
-                        "end_date": (">","1/1/1900")
+                        'end_date': ('>','1/1/1900')
                     },
-                    fields=['name', 'end_date'],
-                    order_by='end_date desc'
+                    fields=['name', 'end_date','modified'],
+                    order_by='end_date, modified desc'
                 )[:1] or [None]
                 # Create new 'FinTS Import' doc
                 fints_import = frappe.get_doc({
@@ -41,23 +41,26 @@ def import_fints_payments(manual=None):
                 })
                 if lastruns[0] is not None:
                     if child_item.import_frequency == 'Daily':
-                        checkdate = datetime.today().date() - relativedelta(days=1)
+                        checkdate = now_datetime().date() - relativedelta(days=1)
                     elif child_item.import_frequency == 'Weekly':
-                        checkdate = datetime.today().date() - relativedelta(weeks=1)
+                        checkdate = now_datetime().date() - relativedelta(weeks=1)
                     elif child_item.import_frequency == 'Monthly':
-                        checkdate = datetime.today().date() - relativedelta(months=1)
+                        checkdate = now_datetime().date() - relativedelta(months=1)
                     else:
                         raise Exception("Unknown frequency")
                     if lastruns[0].end_date < checkdate or manual:
-                        overlap = child_item.overlap
-                        if overlap < 0:
-                            overlap = 0
+                        fints_import.from_date = lastruns[0].end_date + relativedelta(days=1)
+                        # overlap = child_item.overlap
+                        # if overlap < 0:
+                        #    overlap = 0
                     else:
                         frappe.db.rollback()
                         print("skip")
                         continue
-                    fints_import.from_date = lastruns[0].end_date - relativedelta(days=overlap)
-                # else: load all available transactions
+                    #fints_import.from_date = lastruns[0].end_date - relativedelta(days=overlap)
+                # else: load all available transactions of the past
+                # always import transactions from yesterday
+                fints_import.to_date = now_datetime().date() - relativedelta(days=1)
 
                 fints_import.save()
                 print(frappe.as_json(fints_import))

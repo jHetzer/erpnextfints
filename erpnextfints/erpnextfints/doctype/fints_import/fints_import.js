@@ -43,6 +43,11 @@ frappe.ui.form.on('FinTS Import', {
 			frm.save()
 		}
 	},
+	to_date: function(frm) {
+		if(frm.doc.fints_login){
+			frm.save()
+		}
+	},
 	import_transaction: function(frm){
 		//frappe.show_progress(frm.docname,1,100,"Connect via FinTS")
 		frm.events.call_import_transaction(frm);

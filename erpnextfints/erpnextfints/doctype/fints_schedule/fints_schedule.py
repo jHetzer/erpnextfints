@@ -32,7 +32,7 @@ def import_fints_payments(manual=None):
                         'end_date': ('>','1/1/1900')
                     },
                     fields=['name', 'end_date','modified'],
-                    order_by='end_date, modified desc'
+                    order_by='end_date desc, modified desc'
                 )[:1] or [None]
                 # Create new 'FinTS Import' doc
                 fints_import = frappe.get_doc({
@@ -48,8 +48,13 @@ def import_fints_payments(manual=None):
                         checkdate = now_datetime().date() - relativedelta(months=1)
                     else:
                         raise Exception("Unknown frequency")
-                    if lastruns[0].end_date < checkdate or manual:
-                        fints_import.from_date = lastruns[0].end_date + relativedelta(days=1)
+
+                    new_from_date = lastruns[0].end_date + relativedelta(days=1)
+                    if (new_from_date < now_datetime().date()
+                        and (
+                            lastruns[0].end_date < checkdate or manual
+                        )):
+                        fints_import.from_date = new_from_date
                         # overlap = child_item.overlap
                         # if overlap < 0:
                         #    overlap = 0
@@ -57,13 +62,13 @@ def import_fints_payments(manual=None):
                         frappe.db.rollback()
                         print("skip")
                         continue
+
                     #fints_import.from_date = lastruns[0].end_date - relativedelta(days=overlap)
                 # else: load all available transactions of the past
                 # always import transactions from yesterday
                 fints_import.to_date = now_datetime().date() - relativedelta(days=1)
 
                 fints_import.save()
-                print(frappe.as_json(fints_import))
                 fin_imp.import_transactions(fints_import.name, child_item.fints_login)
 
                 print(frappe.as_json(child_item))

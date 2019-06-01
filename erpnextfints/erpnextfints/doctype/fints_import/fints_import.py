@@ -21,18 +21,23 @@ class FinTSImport(Document):
         else:
             return True
     def before_save(self):
+        status = True
         if self.from_date is not None:
             if not self.validate_past(self.from_date):
+                status = False
                 frappe.msgprint(_("'From Date' needs to be in the past"))
             if self.to_date is not None:
                 if get_datetime(self.from_date).date() > get_datetime(self.to_date).date():
+                    status = False
                     frappe.msgprint(_("'From Date' needs to be further in the past then 'To Date'"))
         if self.to_date is not None:
             if not self.validate_past(self.to_date):
+                status = False
                 frappe.msgprint(_("'To Date' needs to be in the past"))
-
-    def before_submit(self):
-        self.before_save()
+        return status
+    def validate(self):
+        if not self.before_save():
+            frappe.throw(_("Validation of dates failed"))
 
 @frappe.whitelist()
 def import_transactions(docname, fints_login, debug=False):

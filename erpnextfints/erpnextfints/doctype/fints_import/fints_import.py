@@ -19,7 +19,10 @@ def import_transactions(docname, fints_login, debug=False):
     try:
         curr_doc = frappe.get_doc('FinTS Import', docname)
         fints_conn = FinTSConnection(fints_login)
-        tansactions = fints_conn.get_fints_transactions(curr_doc.from_date)
+        tansactions = fints_conn.get_fints_transactions(
+            curr_doc.from_date,
+            curr_doc.to_date
+        )
         try:
             save_file(
                 docname + ".json",

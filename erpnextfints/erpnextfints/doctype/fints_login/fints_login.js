@@ -33,6 +33,8 @@ frappe.ui.form.on('FinTS Login', {
 		});
 	},
 	refresh: function(frm) {
+		frm.events.enable_received(frm);
+		frm.events.enable_pay(frm);
 		//frm.set_df_property("account_nr","options",frm.fields_dict.account_nr.value)
 		//if(frm.fields_dict.account_nr.df.reqd && )
 		//frm.toggle_reqd("account_nr",true);
@@ -49,6 +51,23 @@ frappe.ui.form.on('FinTS Login', {
 			frm.toggle_display("transaction_settings_section",false)
 		}
 		*/
+	},
+	enable_received: function(frm){
+		var field = "default_customer"
+		if(frm.doc.enable_received){
+			frm.toggle_reqd(field,true);
+		}else{
+			frm.toggle_reqd(field,false);
+		}
+	},
+	enable_pay: function(frm){
+		var field = "default_supplier"
+
+		if(frm.doc.enable_pay){
+			frm.toggle_reqd(field,true);
+		}else{
+			frm.toggle_reqd(field,false);
+		}
 	},
 	/*account_nr: function(frm) {
 		if(frm.doc.account_nr){

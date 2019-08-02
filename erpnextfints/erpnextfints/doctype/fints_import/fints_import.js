@@ -4,8 +4,8 @@
 frappe.ui.form.on('FinTS Import', {
 	onload: function(frm) {
 		frappe.realtime.on("fints_import_progress", function(data) {
-			if (data.fints_login === frm.doc.name) {
-				if (data.reload && data.reload === true) {
+			if(data.fints_login === frm.doc.name) {
+				if(data.reload && data.reload === true) {
 					frm.reload_doc();
 				}
 				if(data.progress==100) {
@@ -15,6 +15,16 @@ frappe.ui.form.on('FinTS Import', {
 				}
 			}
 		});
+		if(frm.doc.docstatus == 1){
+			frm.toggle_display("import_transaction",false);
+			frm.toggle_display("import_details_section",true);
+		}
+	},
+	setup: function(frm) {
+		frm.set_value(
+			"to_date",
+			frappe.datetime.add_days(frappe.datetime.nowdate(),-1)
+		);
 	},
 	refresh: function(frm) {
 		if(frm.doc.fints_login && frm.doc.docstatus == 0){
@@ -29,6 +39,11 @@ frappe.ui.form.on('FinTS Import', {
 		}
 	},
 	from_date: function(frm) {
+		if(frm.doc.fints_login){
+			frm.save()
+		}
+	},
+	to_date: function(frm) {
 		if(frm.doc.fints_login){
 			frm.save()
 		}

@@ -67,7 +67,7 @@ class ImportPaymentEntry:
                     )
                     new_payment_entry.party = customer["party"]
                     if customer["is_default"]:
-                        remarks = ("Sender '{0}':<br>{1} {2}").format(
+                        remarks = ("Sender '{0}':\n{1} {2}").format(
                             t["applicant_name"],
                             t["posting_text"],
                             t['purpose']

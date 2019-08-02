@@ -107,6 +107,11 @@ after_install = "erpnextfints.utils.install.after_install"
 # 		"erpnextfints.tasks.monthly"
 # 	]
 # }
+scheduler_events = {
+    "daily_long": [
+        "erpnextfints.erpnextfints.doctype.fints_schedule.fints_schedule.import_fints_payments"
+    ]
+}
 
 # Testing
 # -------

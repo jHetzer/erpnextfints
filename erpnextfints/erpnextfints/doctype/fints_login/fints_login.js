@@ -92,7 +92,7 @@ frappe.ui.form.on('FinTS Login', {
 				'docname': frm.docname
 			},
 			callback: function(r) {
-				console.log(r)
+				//console.log(r)
 				frm.toggle_display("account_nr",true)
 				frm.set_value("account_nr","");
 				frm.set_value("failed_connection",0);

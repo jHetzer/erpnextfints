@@ -72,7 +72,7 @@ frappe.ui.form.on('FinTS Import', {
 				"fints_login": frm.doc.fints_login
 			},
 			callback: function(r) {
-				console.log(r)
+				//console.log(r)
 				frappe.hide_progress();
 			},
 			error: function(r) {

@@ -58,7 +58,6 @@ class ImportPaymentEntry:
                     new_payment_entry = frappe.get_doc({'doctype': 'Payment Entry'})
                     if t["status"].lower() == "c":
                         if self.fints_login.enable_received:
-                            rappe.msgprint("Is Enabled")
                             new_payment_entry.payment_type = "Receive"
                             new_payment_entry.party_type = "Customer"
                             new_payment_entry.paid_to = self.fints_login.erpnext_account

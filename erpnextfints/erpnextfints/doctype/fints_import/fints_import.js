@@ -19,13 +19,19 @@ frappe.ui.form.on('FinTS Import', {
 			frm.toggle_display("import_transaction",false);
 			frm.toggle_display("import_details_section",true);
 		}
+		if(frm.doc.docstatus == 0 && !(frm.doc.to_date)){
+			frm.set_value(
+				"to_date",
+				frappe.datetime.add_days(frappe.datetime.nowdate(),-1)
+			);
+		}
 	},
-	setup: function(frm) {
+	/*setup: function(frm) {
 		frm.set_value(
 			"to_date",
 			frappe.datetime.add_days(frappe.datetime.nowdate(),-1)
 		);
-	},
+	},*/
 	refresh: function(frm) {
 		if(frm.doc.fints_login && frm.doc.docstatus == 0){
 			frm.page.set_primary_action(__("Start Import"), function() {

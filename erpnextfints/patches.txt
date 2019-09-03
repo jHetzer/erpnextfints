@@ -1,0 +1,1 @@
+erpnextfints.patches.v0_0_2.update_fints_import

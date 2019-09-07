@@ -55,7 +55,19 @@ class ImportPaymentEntry:
                 )
                 transaction_id = hashlib.md5(uniquestr.encode('utf-8')).hexdigest()
                 if not frappe.db.exists('Payment Entry', {'reference_no': transaction_id}):
-                    new_payment_entry = frappe.get_doc({'doctype': 'Payment Entry'})
+                    # date is in YYYY.MM.DD (json)
+                    new_payment_entry = frappe.get_doc({
+                        'doctype': 'Payment Entry',
+                        'allocate_payment_amount': 0,
+                        'reference_no': transaction_id,
+                        'posting_date': t["date"],
+                        'reference_date': t["date"],
+                        'company': self.fints_login.company,
+                        'paid_amount': amount,
+                        'received_amount': amount,
+                        'iban': t["applicant_iban"],
+                        'bic': t["applicant_bin"]
+                    })
                     if t["status"].lower() == "c":
                         if self.fints_login.enable_received:
                             new_payment_entry.payment_type = "Receive"
@@ -73,17 +85,8 @@ class ImportPaymentEntry:
                         else:
                             continue
                     else:
-                         frappe.log_error(_("Payment type not handled"),_("FinTS Import Error"))
-                         continue
-
-                    # date is in YYYY.MM.DD (json)
-                    new_payment_entry.posting_date = t["date"]
-                    new_payment_entry.company = self.fints_login.company
-
-                    new_payment_entry.paid_amount = amount
-                    new_payment_entry.received_amount = amount
-                    new_payment_entry.iban = t["applicant_iban"]
-                    new_payment_entry.bic = t["applicant_bin"]
+                        frappe.log_error(_("Payment type not handled"),_("FinTS Import Error"))
+                        continue
 
                     party = self.get_party_by_value(
                         t["applicant_name"],
@@ -102,8 +105,6 @@ class ImportPaymentEntry:
                         remarks = "{0} {1}".format(t["posting_text"],t['purpose'])
                     new_payment_entry.remarks = remarks
 
-                    new_payment_entry.reference_no = transaction_id
-                    new_payment_entry.reference_date = t["date"]
                     if self.debug:
                         frappe.msgprint(frappe.as_json(new_payment_entry))
                     self.payment_entries.append(new_payment_entry.insert())

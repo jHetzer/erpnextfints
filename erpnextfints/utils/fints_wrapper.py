@@ -8,6 +8,7 @@ from frappe.model.document import Document
 from dateutil.relativedelta import relativedelta
 from frappe.utils import now_datetime
 from fints.client import FinTS3PinTanClient
+from fints.client import FinTSClientMode
 import frappe
 import mt940
 
@@ -29,8 +30,10 @@ class FinTSConnection:
                     self.fints_login.blz,
                     self.fints_login.fints_login,
                     password,
-                    self.fints_login.fints_url
+                    self.fints_login.fints_url,
+                    mode=FinTSClientMode.INTERACTIVE
                 )
+                self.fints_connection.set_tan_mechanism('942')
         except Exception as e:
             frappe.throw("Could not conntect to fints server with error<br>{0}".format(e))
     def get_fints_connection(self):

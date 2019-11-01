@@ -23,9 +23,6 @@ setup(
 	include_package_data=True,
 	install_requires=[
 		"install_requires",
-        "fints"
+        "fints @ git+https://github.com/raphaelm/python-fints.git@psd2#egg=fints",
     ],
-    dependency_links=[
-        "git+https://github.com/raphaelm/python-fints.git@psd2#egg=fints"
-    ]
 )

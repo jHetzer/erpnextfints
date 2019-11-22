@@ -1,0 +1,19 @@
+{
+ "content": null,
+ "creation": "2019-11-15 09:20:05.675857",
+ "docstatus": 0,
+ "doctype": "Page",
+ "idx": 0,
+ "modified": "2019-11-15 09:20:05.675857",
+ "modified_by": "Administrator",
+ "module": "ERPNextFinTS",
+ "name": "bank_account_wizard",
+ "owner": "Administrator",
+ "page_name": "bank_account_wizard",
+ "roles": [],
+ "script": null,
+ "standard": "Yes",
+ "style": null,
+ "system_page": 0,
+ "title": "Bank Account Wizard"
+}

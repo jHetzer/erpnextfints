@@ -26,5 +26,17 @@ def get_data():
                        "description": _("FinTS Schedule")
                    }
             ]
+        },
+        {
+            "label": _("Tools"),
+            "icon": "octicon octicon-git-compare",
+            "items": [
+                {
+                   "type": "page",
+                   "name": "bank_account_wizard",
+                   "label": _("Bank Account Wizard"),
+                   "description": _("Create bank accounts for parties")
+                }
+            ]
         }
 ]

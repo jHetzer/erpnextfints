@@ -38,16 +38,18 @@ def createBankAccount(payment_doc, bankData):
           'is_company_account': False,
           'is_default': False,
         }
-        if not frappe.db.exists('Bank Account', (
-            payment_doc.get('sender') + " - " + bankData.get('name'))
-        ):
+        bankAccountName = payment_doc.get('sender') + " - " + bankData.get('name')
+        if not frappe.db.exists('Bank Account', bankAccountName):
             newBankAccount = frappe.get_doc(bankAccount)
             newBankAccount.submit()
             frappe.msgprint(_("Successfully created Bank Account"))
-            return newBankAccount
+            return { "bankAccount": newBankAccount, "status": True}
         else:
             frappe.msgprint(_("Bank account already exists"))
-            return True
+            return {
+                "bankAccount": frappe.get_doc('Bank Account', bankAccountName),
+                "status": True
+            }
     except Exception as e:
         frappe.throw(_("Could not create bank account with error: {0}").format(e))
 

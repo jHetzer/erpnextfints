@@ -17,7 +17,6 @@ erpnextfints.tools.bankWizard = class BankWizard {
     });
     this.parent = wrapper;
     this.page = this.parent.page;
-
     this.make();
   }
 
@@ -30,8 +29,7 @@ erpnextfints.tools.bankWizard = class BankWizard {
 			style="height: 50vh; display: flex;"><h5 class="text-muted">${empty_state}</h5></div>`)
 
     me.clear_page_content();
-    me.make_reconciliation_tool();
-		me.add_actions()
+		me.make_bankwizard_tool();
   }
 
   add_actions() {
@@ -51,7 +49,7 @@ erpnextfints.tools.bankWizard = class BankWizard {
     me.$main_section.empty();
   }
 
-  make_reconciliation_tool() {
+  make_bankwizard_tool() {
     const me = this;
     frappe.call({
       method: "erpnextfints.utils.client.getPossibleBankAccount",
@@ -65,7 +63,7 @@ erpnextfints.tools.bankWizard = class BankWizard {
             ref_items: r.message
           });
           frappe.pages['bank_account_wizard'].refresh = function(wrapper) {
-            erpnextfints.tools.bankWizardObj.make();
+            window.location.reload(false);
           }
         })
       }
@@ -100,12 +98,14 @@ erpnextfints.tools.bankWizardTool = class BankWizardTool extends frappe.views.Ba
     //
   }
   before_refresh() {
+		//erpnextfints.tools.bankWizardObj.clear_page_content()
     frappe.model.with_doctype("Payment Entry", () => {
       frappe.call({
         method: "erpnextfints.utils.client.getPossibleBankAccount",
         args: {},
         callback(r) {
           this.ref_items = r.message;
+					//erpnextfints.tools.bankWizardObj.make();
         }
       });
     });
@@ -125,7 +125,7 @@ erpnextfints.tools.bankWizardTool = class BankWizardTool extends frappe.views.Ba
       }
     }
     me.page.btn_secondary.click(function(e) {
-      erpnextfints.tools.bankWizardObj.make();
+			window.location.reload(false);
     });
     this.$result.find('.list-row-container').remove();
     $('[data-fieldname="name"]').remove();
@@ -168,9 +168,13 @@ erpnextfints.tools.bankWizardRow = class BankWizardRow {
 		*/
 
     $(me.row).on('click', '.new-bank-account', function() {
-      erpnextfints.iban_tools.setPartyBankAccount({
+			erpnextfints.iban_tools.setPartyBankAccount({
         doc: me.data
-      });
+      },function(e){
+				if (e.message.status == true) {
+					me.row.remove();
+				}
+			});
     })
   }
 }

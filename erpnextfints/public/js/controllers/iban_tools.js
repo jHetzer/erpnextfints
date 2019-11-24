@@ -62,19 +62,20 @@ erpnextfints.iban_tools = {
         }
     });
   },
-  createPartyBankAccount: function(frm, bankInfo) {
+  createPartyBankAccount: function(frm, bankInfo, resultCallback) {
     frappe.call({
       method: "erpnextfints.utils.client.createBankAccount",
       args: {
         payment_doc: frm,
         bankData: bankInfo.bankData,
       },
+      callback: resultCallback,
       /*callback: function(r) {
         console.log(r);
       },*/
     });
   },
-  setPartyBankAccount: function(frm) {
+  setPartyBankAccount: function(frm, callback) {
     erpnextfints.iban_tools.getBankDetailsByIBAN(frm.doc.iban, function(data) {
       if (data.checkResults.bankCode) {
         frappe.call({
@@ -152,7 +153,7 @@ erpnextfints.iban_tools = {
                 }, ],
                 primary_action_label: __('Submit'),
                 primary_action: function(values) {
-                  erpnextfints.iban_tools.createPartyBankAccount(frm.doc, data);
+                  erpnextfints.iban_tools.createPartyBankAccount(frm.doc, data, callback);
                   dialog.hide();
                 },
               });

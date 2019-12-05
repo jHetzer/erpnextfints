@@ -1,10 +1,5 @@
 SELECT
-  tPE.name,
-  tPE.party_type,
-  tPE.party,
-  tPE.iban,
-  tPE.bic,
-  tPE.sender
+  tPE.*
 FROM
   `tabPayment Entry` AS tPE
   LEFT JOIN `tabBank Account` AS tBA ON tPE.iban = tBA.iban

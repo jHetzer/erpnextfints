@@ -5,7 +5,8 @@ frappe.provide("erpnextfints.tools");
 {% include "erpnextfints/public/js/controllers/iban_tools.js" %}
 
 frappe.pages['bank_account_wizard'].on_page_load = function(wrapper) {
-  erpnextfints.tools.bankWizardObj = new erpnextfints.tools.bankWizard(wrapper);
+  erpnextfints.tools.bankWizardObj = new erpnextfints.tools.bankWizard(
+    wrapper);
 }
 
 erpnextfints.tools.bankWizard = class BankWizard {
@@ -23,13 +24,18 @@ erpnextfints.tools.bankWizard = class BankWizard {
   make() {
     const me = this;
 
-    me.$main_section = $(`<div class="reconciliation page-main-content"></div>`).appendTo(me.page.main);
-    const empty_state = __("Upload a bank statement, link or reconcile a bank account")
-    me.$main_section.append(`<div class="flex justify-center align-center text-muted"
-			style="height: 50vh; display: flex;"><h5 class="text-muted">${empty_state}</h5></div>`)
-
+    me.$main_section = $(
+      `<div class="reconciliation page-main-content"></div>`).appendTo(me
+      .page.main);
+    const empty_state = __(
+      "Upload a bank statement, link or reconcile a bank account")
+    me.$main_section.append(
+      `<div class="flex justify-center align-center text-muted"
+			style="height: 50vh; display: flex;"><h5 class="text-muted">${empty_state}</h5></div>`
+    )
     me.clear_page_content();
-		me.make_bankwizard_tool();
+    me.make_bankwizard_tool();
+    me.add_actions();
   }
 
   add_actions() {
@@ -37,9 +43,29 @@ erpnextfints.tools.bankWizard = class BankWizard {
 
     me.page.show_menu();
 
-		me.page.add_menu_item(__("Create All"), function() {
-			frappe.msgprint(__("No net implemented"));
-		}, true)
+    me.page.add_menu_item(__("Create All"), function() {
+      var items = erpnextfints.tools.bankWizardList.ref_items;
+
+      function createAllBankAccount(dataArray, index){
+        erpnextfints.iban_tools.setPartyBankAccount({
+          doc: dataArray[index],
+        }, function(e) {
+          if (e.message.status == true) {
+            //me.row.remove();
+            erpnextfints.tools.bankWizardList.ref_items.splice(index,1);
+            erpnextfints.tools.bankWizardList.render();
+            setTimeout(
+              function(){
+                frappe.hide_msgprint();
+                createAllBankAccount(dataArray, index + 1);
+              }, 700
+            );
+          }
+        });
+      }
+      createAllBankAccount(items, 0);
+
+    }, true)
   }
 
   clear_page_content() {
@@ -57,12 +83,13 @@ erpnextfints.tools.bankWizard = class BankWizard {
       callback(r) {
         frappe.model.with_doctype("Payment Entry", () => {
           erpnextfints.tools.bankWizardList = new erpnextfints.tools.bankWizardTool({
-            parent: me.parent,
-            doctype: "Payment Entry",
-            page_title: __(me.page.title),
-            ref_items: r.message
-          });
-          frappe.pages['bank_account_wizard'].refresh = function(wrapper) {
+              parent: me.parent,
+              doctype: "Payment Entry",
+              page_title: __(me.page.title),
+              ref_items: r.message
+            });
+          frappe.pages['bank_account_wizard'].refresh = function(
+            wrapper) {
             window.location.reload(false);
           }
         })
@@ -83,7 +110,9 @@ erpnextfints.tools.bankWizardTool = class BankWizardTool extends frappe.views.Ba
     super.setup_defaults();
     //this.page_title = __("Bank Reconciliation");
     //this.doctype = 'Payment Entry';
-    this.fields = ['party_type', 'party', 'sender', 'iban', 'bic', 'paid_from', 'paid_to', 'payment_type']
+    this.fields = ['party_type', 'party', 'sender', 'iban', 'bic',
+      'paid_from', 'paid_to', 'payment_type'
+    ]
   }
 
   setup_view() {
@@ -97,25 +126,28 @@ erpnextfints.tools.bankWizardTool = class BankWizardTool extends frappe.views.Ba
   make_standard_filters() {
     //
   }
+
   before_refresh() {
-		//erpnextfints.tools.bankWizardObj.clear_page_content()
+    //erpnextfints.tools.bankWizardObj.clear_page_content()
     frappe.model.with_doctype("Payment Entry", () => {
       frappe.call({
         method: "erpnextfints.utils.client.getPossibleBankAccount",
         args: {},
         callback(r) {
           this.ref_items = r.message;
-					//erpnextfints.tools.bankWizardObj.make();
+          //erpnextfints.tools.bankWizardObj.make();
         }
       });
     });
   }
 
   freeze() {
-    this.$result.find('.list-count').html(`<span>${__('Refreshing')}...</span>`);
+    this.$result.find('.list-count').html(
+      `<span>${__('Refreshing')}...</span>`);
   }
   render() {
     const me = this;
+    me.data = me.ref_items;
     //Add Query filter to party_type field
     me.page.fields_dict.party_type.df.get_query = function() {
       return {
@@ -125,15 +157,17 @@ erpnextfints.tools.bankWizardTool = class BankWizardTool extends frappe.views.Ba
       }
     }
     me.page.btn_secondary.click(function(e) {
-			window.location.reload(false);
+      window.location.reload(false);
     });
     this.$result.find('.list-row-container').remove();
     $('[data-fieldname="name"]').remove();
     $('[data-fieldname="payment_type"]').remove();
 
     me.data.map((value) => {
-      if (me.ref_items.filter(item => (item.name === value.name)).length > 0) {
-        const row = $('<div class="list-row-container">').data("data", value).appendTo(me.$result).get(0);
+      if (me.ref_items.filter(item => (item.name === value.name)).length >
+        0) {
+        const row = $('<div class="list-row-container">').data("data",
+          value).appendTo(me.$result).get(0);
         //new erpnext.accounts.ReconciliationRow(row, value);
         new erpnextfints.tools.bankWizardRow(row, value);
       }
@@ -156,7 +190,8 @@ erpnextfints.tools.bankWizardRow = class BankWizardRow {
   }
 
   make() {
-    $(this.row).append(frappe.render_template("bank_account_wizard_row", this.data))
+    $(this.row).append(frappe.render_template("bank_account_wizard_row",
+      this.data))
   }
 
   bind_events() {
@@ -166,15 +201,20 @@ erpnextfints.tools.bankWizardRow = class BankWizardRow {
       frappe.set_route("Form", "Payment Entry", me.bank_entry)
     })
 		*/
-
     $(me.row).on('click', '.new-bank-account', function() {
-			erpnextfints.iban_tools.setPartyBankAccount({
+      erpnextfints.iban_tools.setPartyBankAccount({
         doc: me.data
-      },function(e){
-				if (e.message.status == true) {
-					me.row.remove();
-				}
-			});
+      }, function(e) {
+        if (e.message.status == true) {
+          var index = erpnextfints.tools.bankWizardList
+            .ref_items.findIndex(x => x.name === me.data.name);
+          if(index >= 0){
+            erpnextfints.tools.bankWizardList
+              .ref_items.splice(index,1);
+          }
+          me.row.remove();
+        }
+      });
     })
   }
 }

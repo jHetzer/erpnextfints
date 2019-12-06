@@ -33,14 +33,13 @@ class FinTSConnection:
                     self.fints_login.fints_url,
                     mode=FinTSClientMode.INTERACTIVE
                 )
-                self.fints_connection.set_tan_mechanism('942')
+                #self.fints_connection.set_tan_mechanism('942')
         except Exception as e:
             frappe.throw("Could not conntect to fints server with error<br>{0}".format(e))
     def get_fints_connection(self):
         return self.fints_connection
 
     def get_fints_accounts(self):
-
         frappe.publish_realtime("fints_login_progress", {"progress": "70",
             "fints_login": self.name,"message": "Load accounts", "reload": False}, user=frappe.session.user)
         if not hasattr(self, 'fints_accounts'):

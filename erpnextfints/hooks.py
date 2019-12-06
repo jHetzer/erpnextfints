@@ -1,6 +1,6 @@
-# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-# noqa: D100
 from __future__ import unicode_literals
-from . import __version__ as app_version
+from . import __version__ as app_version  # noqa: F401
 
 app_name = "erpnextfints"
 app_title = "ERPNextFinTS"
@@ -30,7 +30,7 @@ app_license = "MIT"
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
-doctype_js = {"Payment Entry" : "public/js/payment_entry_doctype.js"}
+doctype_js = {"Payment Entry": "public/js/payment_entry_doctype.js"}
 
 # Home Pages
 # ----------
@@ -40,7 +40,7 @@ doctype_js = {"Payment Entry" : "public/js/payment_entry_doctype.js"}
 
 # website user home page (by Role)
 # role_home_page = {
-#	"Role": "home_page"
+#     "Role": "home_page"
 # }
 
 # Website user home page (by function)
@@ -110,7 +110,8 @@ after_install = "erpnextfints.utils.install.after_install"
 # }
 scheduler_events = {
     "daily_long": [
-        "erpnextfints.erpnextfints.doctype.fints_schedule.fints_schedule.import_fints_payments"
+        "erpnextfints.erpnextfints.doctype.fints_schedule.fints_schedule"
+        ".import_fints_payments"
     ]
 }
 
@@ -123,5 +124,5 @@ scheduler_events = {
 # ------------------------------
 #
 # override_whitelisted_methods = {
-# 	"frappe.desk.doctype.event.event.get_events": "erpnextfints.event.get_events"
+#    "frappe.desk.doctype.event.event.get_events": "erpnextfints.event.get_events"   # noqa: E501
 # }

@@ -1,1 +1,2 @@
 erpnextfints.patches.v0_0_2.update_fints_import
+erpnextfints.patches.v0_1_0.replace_fints_account_nr

@@ -3,60 +3,71 @@
 # For license information, please see license.txt
 from __future__ import unicode_literals
 
-import frappe, os, json
-from frappe import _
+import frappe
 
-cur_dir = os.path.dirname(__file__)
 
 @frappe.whitelist()
-def createBankAccount(payment_doc, bankData):
-    try:
-        payment_doc = json.loads(payment_doc)
-        bankData = json.loads(bankData)
+def import_fints_transactions(fints_import, fints_login, user_scope):
+    """Create payment entries by FinTS transactions.
 
-        if not frappe.db.exists('Bank', {'bank_name': bankData.get('name')}):
-            frappe.get_doc({
-              'doctype': 'Bank',
-              'bank_name': bankData.get('name')
-            }).submit()
-        gl_account = None
-        if payment_doc.get('payment_type') == "Pay":
-            gl_account = payment_doc.get('paid_from')
-        else:
-            gl_account = payment_doc.get('paid_to')
+    :param fints_import: fints_import doc name
+    :param fints_login: fints_login doc name
+    :param user_scope: Current open doctype page
+    :type fints_import: str
+    :type fints_login: str
+    :type user_scopet: str
+    :return: List of max 10 transcations and all new payment entries
+    """
+    from erpnextfints.utils.fints_controller import FinTSController
+    interactive = {"docname": user_scope, "enabled": True}
 
-        bankAccount = {
-          'doctype': 'Bank Account',
-          'account_name': payment_doc.get('sender'),
-          'account': gl_account,
-          'bank': bankData.get('name'),
-          'party_type': payment_doc.get('party_type'),
-          'party': payment_doc.get('party'),
-          'iban': payment_doc.get('iban'),
-          'bank_account_no': bankData.get('64061854'),
-          'swift_number': bankData.get('bic'),
-          'is_company_account': False,
-          'is_default': False,
-        }
-        bankAccountName = payment_doc.get('sender') + " - " + bankData.get('name')
-        if not frappe.db.exists('Bank Account', bankAccountName):
-            newBankAccount = frappe.get_doc(bankAccount)
-            newBankAccount.submit()
-            frappe.msgprint(_("Successfully created Bank Account"))
-            return { "bankAccount": newBankAccount, "status": True}
-        else:
-            frappe.msgprint(_("Bank account already exists"))
-            return {
-                "bankAccount": frappe.get_doc('Bank Account', bankAccountName),
-                "status": True
-            }
-    except Exception as e:
-        frappe.throw(_("Could not create bank account with error: {0}").format(e))
+    return FinTSController(fints_login, interactive) \
+        .import_fints_transactions(fints_import)
+
 
 @frappe.whitelist()
-def getPossibleBankAccount():
-    file_path = os.path.join(cur_dir, './sql/bank_wizard.sql')
-    filehandle = open(file_path)
-    sqlQuery = filehandle.read()
-    filehandle.close()
-    return frappe.db.sql(sqlQuery, as_dict=True)
+def get_accounts(fints_login, user_scope):
+    """Create payment entries by FinTS transactions.
+
+    :param fints_login: fints_login doc name
+    :param user_scope: Current open doctype page
+    :type fints_login: str
+    :type user_scopet: str
+    :return: FinTS accounts json formated
+    """
+    from erpnextfints.utils.fints_controller import FinTSController
+    interactive = {"docname": user_scope, "enabled": True}
+
+    return {
+        "accounts": FinTSController(
+            fints_login,
+            interactive).get_fints_accounts()
+    }
+
+
+@frappe.whitelist()
+def new_bank_account(payment_doc, bankData):
+    """Create new bank account.
+
+    Create new bank account and if missing a bank entry.
+    :param payment_doc: json formated payment_doc
+    :param bankData: json formated bank information
+    :type payment_doc: str
+    :type bankData: str
+    :return: Dict with status and bank details
+    """
+    from erpnextfints.utils.bank_account_controller import \
+        BankAccountController
+    return BankAccountController().new_bank_account(payment_doc, bankData)
+
+
+@frappe.whitelist()
+def get_missing_bank_accounts():
+    """Get possibly missing bank accounts.
+
+    Query payment entries for missing bank accounts.
+    :return: List of payment entry data
+    """
+    from erpnextfints.utils.bank_account_controller import \
+        BankAccountController
+    return BankAccountController().get_missing_bank_accounts()

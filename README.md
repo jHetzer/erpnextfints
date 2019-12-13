@@ -17,15 +17,20 @@ Python 3.4 <\
     bench get-app erpnextfints https://github.com/jHetzer/erpnextfints
     bench --site [sitename] install-app erpnextfints
 ```
+## Features
+- [x] FinTS Login
+- [x] Basic FinTS Import
+- [x] Save data as JSON and attach it
+- [x] Add import scheduler
+- [x] Support 'Pay' payment entry type
+- [x] Bank Account Wizard
+- [x] Interactive progress display
 
 ## ToDo
- - [x] FinTS Login
- - [x] Basic FinTS Import
- - [x] Save data as JSON and attach it
- - [x] Add import scheduler
- - [x] Support 'Pay' payment entry type
+ - [ ] Unit tests / Cypress-tests
+ - [ ] Complete improving code style (PEP8 / ESLint)
+ - [ ] Payment / Sale auto assignment (unattended / wizard)
  - [ ] Improve import logs
- - [ ] Improve progress display
  - [ ] Legal way to publish/get FinTS URL's
  [https://www.hbci-zka.de/register/bedingungen_bankenliste.htm](https://www.hbci-zka.de/register/bedingungen_bankenliste.htm)
  - [ ] ...

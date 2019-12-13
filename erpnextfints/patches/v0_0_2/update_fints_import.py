@@ -2,7 +2,8 @@ from __future__ import unicode_literals
 
 import frappe
 
-def execute():
+
+def execute(): # noqa E103
     frappe.reload_doc("erpnextfints", "doctype", "fints_login")
     frappe.db.sql("""
             Update

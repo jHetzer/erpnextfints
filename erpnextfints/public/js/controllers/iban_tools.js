@@ -64,7 +64,7 @@ erpnextfints.iban_tools = {
   },
   createPartyBankAccount: function(frm, bankInfo, resultCallback) {
     frappe.call({
-      method: "erpnextfints.utils.client.createBankAccount",
+      method: "erpnextfints.utils.client.new_bank_account",
       args: {
         payment_doc: frm,
         bankData: bankInfo.bankData,

@@ -78,7 +78,7 @@ erpnextfints.tools.bankWizard = class BankWizard {
   make_bankwizard_tool() {
     const me = this;
     frappe.call({
-      method: "erpnextfints.utils.client.getPossibleBankAccount",
+      method: "erpnextfints.utils.client.get_missing_bank_accounts",
       args: {},
       callback(r) {
         frappe.model.with_doctype("Payment Entry", () => {
@@ -131,7 +131,7 @@ erpnextfints.tools.bankWizardTool = class BankWizardTool extends frappe.views.Ba
     //erpnextfints.tools.bankWizardObj.clear_page_content()
     frappe.model.with_doctype("Payment Entry", () => {
       frappe.call({
-        method: "erpnextfints.utils.client.getPossibleBankAccount",
+        method: "erpnextfints.utils.client.get_missing_bank_accounts",
         args: {},
         callback(r) {
           this.ref_items = r.message;

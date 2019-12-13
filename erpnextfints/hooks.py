@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-# noqa: D100
+# -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from . import __version__ as app_version  # noqa: F401
 
@@ -85,8 +85,14 @@ after_install = "erpnextfints.utils.install.after_install"
 # 		"on_update": "method",
 # 		"on_cancel": "method",
 # 		"on_trash": "method"
-#	}
+# 		}
 # }
+doc_events = {
+    "Bank Account": {
+        "validate": "erpnextfints.utils.bank_account_controller.validate_unique_iban"  # noqa: E501
+    }
+}
+
 
 # Scheduled Tasks
 # ---------------
@@ -110,8 +116,7 @@ after_install = "erpnextfints.utils.install.after_install"
 # }
 scheduler_events = {
     "daily_long": [
-        "erpnextfints.erpnextfints.doctype.fints_schedule.fints_schedule"
-        ".import_fints_payments"
+        "erpnextfints.erpnextfints.doctype.fints_schedule.fints_schedule.scheduled_import_fints_payments"  # noqa: E501
     ]
 }
 

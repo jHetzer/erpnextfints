@@ -33,7 +33,8 @@ class BankAccountController:
                 frappe.get_doc({
                     'doctype': 'Bank',
                     'bank_name': bankName}
-                ).submit()
+                ).insert()
+
             gl_account = None
             if payment_doc.get('payment_type') == "Pay":
                 gl_account = payment_doc.get('paid_from')
@@ -48,7 +49,7 @@ class BankAccountController:
                 'party_type': payment_doc.get('party_type'),
                 'party': payment_doc.get('party'),
                 'iban': payment_doc.get('iban'),
-                'bank_account_no': bankData.get('64061854'),
+                'bank_account_no': bankData.get('bankCode'),
                 'swift_number': bankData.get('bic'),
                 'is_company_account': False,
                 'is_default': False,
@@ -59,7 +60,7 @@ class BankAccountController:
             ])
             if not frappe.db.exists('Bank Account', bankAccountName):
                 newBankAccount = frappe.get_doc(bankAccount)
-                newBankAccount.submit()
+                newBankAccount.insert()
                 frappe.msgprint(_("Successfully created Bank Account"))
                 return {"bankAccount": newBankAccount, "status": True}
             else:
@@ -91,7 +92,15 @@ class BankAccountController:
 def validate_unique_iban(doc, method):
     """Bank Account IBAN should be unique."""
     doctype = "Bank Account"
-    bankAccountName = frappe.db.exists(doctype, {"iban": doc.iban})
+    bankAccountName = frappe.db.get_value(
+        doctype,
+        filters={
+            "iban": doc.iban,
+            "name": [
+                "!=",
+                doc.name
+            ]
+        })
     if bankAccountName:
         frappe.throw(_("IBAN already exists in bank account: {0}").format(
             getlink(doctype, bankAccountName)

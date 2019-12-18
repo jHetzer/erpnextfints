@@ -12,6 +12,7 @@ WHERE
   AND tPE.docstatus != 2
   AND tPE.party IS NOT NULL
   AND tPE.iban IS NOT NULL
+  AND tPE.iban LIKE 'DE%'
   AND tPE.sender IS NOT NULL
 GROUP BY
   iban,

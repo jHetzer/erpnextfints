@@ -23,8 +23,5 @@ setup(
     packages=find_packages(),
     zip_safe=False,
     include_package_data=True,
-    install_requires=[
-        "install_requires",
-        "fints @ git+https://github.com/raphaelm/python-fints.git@psd2#egg=fints",  # noqa: E501
-    ],
+    install_requires=install_requires
 )

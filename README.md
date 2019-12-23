@@ -25,10 +25,10 @@ Python 3.4 <\
 - [x] Support 'Pay' payment entry type
 - [x] Bank Account Wizard
 - [x] Interactive progress display
+- [x] Complete improving code style (PEP8 / ESLint)
 
 ## ToDo
  - [ ] Unit tests / Cypress-tests
- - [ ] Complete improving code style (PEP8 / ESLint)
  - [ ] Payment / Sale auto assignment (unattended / wizard)
  - [ ] Improve import logs
  - [ ] Legal way to publish/get FinTS URL's

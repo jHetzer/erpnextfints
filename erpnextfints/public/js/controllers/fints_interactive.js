@@ -13,7 +13,7 @@ erpnextfints.interactive = {
 				if(data.progress==100) {
 					frappe.hide_progress();
 				} else {
-					frappe.show_progress(data.docname,data.progress,100,data.message)
+					frappe.show_progress(data.docname,data.progress,100,data.message);
 				}
 			}
 		});

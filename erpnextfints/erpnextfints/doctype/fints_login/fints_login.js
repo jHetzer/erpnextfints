@@ -7,9 +7,9 @@ frappe.ui.form.on('FinTS Login', {
 	onload: function(frm) {
 		erpnextfints.interactive.progressbar(frm);
 		if(frm.doc.account_iban){
-			frm.toggle_display("transaction_settings_section",true)
+			frm.toggle_display("transaction_settings_section",true);
 		}else{
-			frm.toggle_display("transaction_settings_section",false)
+			frm.toggle_display("transaction_settings_section",false);
 		}
 	},
 	setup: function(frm) {
@@ -26,11 +26,11 @@ frappe.ui.form.on('FinTS Login', {
 	refresh: function(frm) {
 		frm.events.enable_received(frm);
 		frm.events.enable_pay(frm);
-		//frm.set_df_property("account_nr","options",frm.fields_dict.account_nr.value)
-		//if(frm.fields_dict.account_nr.df.reqd && )
-		//frm.toggle_reqd("account_nr",true);
+		// frm.set_df_property("account_nr","options",frm.fields_dict.account_nr.value)
+		// if(frm.fields_dict.account_nr.df.reqd && )
+		// frm.toggle_reqd("account_nr",true);
 		if(frm.doc.iban_list){
-			frm.set_df_property("account_iban","options",JSON.parse(frm.doc.iban_list))
+			frm.set_df_property("account_iban","options",JSON.parse(frm.doc.iban_list));
 		}
 		if(!frm.doc.account_iban){
 			frm.toggle_display("account_iban",false);
@@ -44,7 +44,7 @@ frappe.ui.form.on('FinTS Login', {
 		*/
 	},
 	enable_received: function(frm){
-		var field = "default_customer"
+		var field = "default_customer";
 		if(frm.doc.enable_received){
 			frm.toggle_reqd(field,true);
 		}else{
@@ -52,7 +52,7 @@ frappe.ui.form.on('FinTS Login', {
 		}
 	},
 	enable_pay: function(frm){
-		var field = "default_supplier"
+		var field = "default_supplier";
 
 		if(frm.doc.enable_pay){
 			frm.toggle_reqd(field,true);
@@ -60,7 +60,7 @@ frappe.ui.form.on('FinTS Login', {
 			frm.toggle_reqd(field,false);
 		}
 	},
-	/*account_nr: function(frm) {
+	/* account_nr: function(frm) {
 		if(frm.doc.account_nr){
 			frm.save();
 		}
@@ -69,7 +69,7 @@ frappe.ui.form.on('FinTS Login', {
 		if (frm.doc.__unsaved){
 			frm.save().then(() => {
 				frm.events.call_get_login_accounts(frm);
-			})
+			});
 		}else{
 			frm.events.call_get_login_accounts(frm);
 			frappe.hide_progress();
@@ -83,23 +83,23 @@ frappe.ui.form.on('FinTS Login', {
 				'user_scope': frm.doc.name
 			},
 			callback: function(r) {
-				//console.log(r)
-				frm.toggle_display("account_iban",true)
+				// console.log(r)
+				frm.toggle_display("account_iban",true);
 				frm.set_value("account_iban","");
 				frm.set_value("failed_connection",0);
 
 				var ibanList = r.message.accounts.map(x => x[0]);
 				frm.set_df_property("account_iban","options",ibanList);
-				//frm.toggle_reqd("account_nr",true);
-				//console.log(JSON.stringify(ibanList));
+				// frm.toggle_reqd("account_nr",true);
+				// console.log(JSON.stringify(ibanList));
 				frm.set_value("iban_list", JSON.stringify(ibanList));
 				frm.toggle_reqd("account_iban",true);
 			},
-			error: function(r) {
-				console.log(r);
+			error: function(/* r */) {
+				// console.log(r);
 				frappe.hide_progress();
-				frm.set_df_property("account_iban","options","")
-				frm.toggle_display("account_iban",false)
+				frm.set_df_property("account_iban","options","");
+				frm.toggle_display("account_iban",false);
 
 				frappe.run_serially([
 					() => frm.set_value("account_iban",""),
@@ -108,6 +108,6 @@ frappe.ui.form.on('FinTS Login', {
 					() => frm.save(),
 				]);
 			}
-		})
+		});
 	}
 });

@@ -17,7 +17,7 @@ frappe.ui.form.on('FinTS Import', {
 			);
 		}
 	},
-	/*setup: function(frm) {
+	/* setup: function(frm) {
 		frm.set_value(
 			"to_date",
 			frappe.datetime.add_days(frappe.datetime.nowdate(),-1)
@@ -32,21 +32,21 @@ frappe.ui.form.on('FinTS Import', {
 	},
 	fints_login: function(frm) {
 		if(frm.doc.fints_login){
-			frm.save()
+			frm.save();
 		}
 	},
 	from_date: function(frm) {
 		if(frm.doc.fints_login){
-			frm.save()
+			frm.save();
 		}
 	},
 	to_date: function(frm) {
 		if(frm.doc.fints_login){
-			frm.save()
+			frm.save();
 		}
 	},
 	import_transaction: function(frm){
-		//frappe.show_progress(frm.docname,1,100,"Connect via FinTS")
+		// frappe.show_progress(frm.docname,1,100,"Connect via FinTS")
 		frm.events.call_import_transaction(frm);
 		/*
 		if (frm.doc.__unsaved){
@@ -61,7 +61,7 @@ frappe.ui.form.on('FinTS Import', {
 
 	},
 	call_import_transaction: function(frm){
-		//frappe.show_progress(frm.docname,1,100,"Connect via FinTS")
+		// frappe.show_progress(frm.docname,1,100,"Connect via FinTS")
 		frappe.call({
 			method:"erpnextfints.utils.client.import_fints_transactions",
 			args: {
@@ -69,14 +69,14 @@ frappe.ui.form.on('FinTS Import', {
 				'fints_login': frm.doc.fints_login,
 				'user_scope': frm.docname,
 			},
-			callback: function(r) {
-				//console.log(r)
+			callback: function(/* r */) {
+				// console.log(r);
 				frappe.hide_progress();
 			},
-			error: function(r) {
-				console.log(r);
+			error: function(/* r */) {
+				// console.log(r);
 				frappe.hide_progress();
 			}
-		})
+		});
 	}
 });

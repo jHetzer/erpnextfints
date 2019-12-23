@@ -3,8 +3,9 @@
 # See license.txt
 from __future__ import unicode_literals
 
-import frappe
+import frappe  # noqa: F401
 import unittest
 
+
 class TestFinTSSchedule(unittest.TestCase):
-	pass
+    pass

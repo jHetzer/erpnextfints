@@ -3,6 +3,7 @@
 *.egg-info
 *.swp
 .eslintcache
+package.json
 tags
 erpnextfints/docs/current
 node_modules

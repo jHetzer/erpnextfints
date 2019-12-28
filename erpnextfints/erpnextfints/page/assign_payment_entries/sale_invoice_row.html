@@ -1,0 +1,58 @@
+<div class="list-row payment-assign-wizard-item">
+	<div>
+		<div class="clickable-section" data-name="{{ name }}">
+			<div class="col-sm-3 ellipsis hidden-xs">
+				<a href="#Form/Sales Invoice/{{ name }}">{{ name }}</a>
+			</div>
+			<div class="col-sm-2 ellipsis hidden-xs">
+				{{ customer }}
+			</div>
+			<div class="col-sm-2 ellipsis hidden-xs">
+				{{ outstanding_amount }} {{ currency}}
+			</div>
+			<div class="col-sm-2 ellipsis hidden-xs">
+				{{ posting_date }}
+			</div>
+			<div class="col-sm-2 ellipsis hidden-xs">
+				{{ due_date }}
+			</div>
+			<div class="col-sm-1" style="padding-right: 0px">
+				<button
+					class="hide_row btn btn-default btn-xs hidden-xs center-block"
+					data-name="{{ name }}"
+					style="padding-top: 0px; padding-bottom: 0px;"
+				>{{ __("Hide") }}</button>
+			</div>
+		</div>
+	</div>
+</div>
+{% for payment in payments %}
+<div class="list-row payment-assign-wizard-item" style="height: auto;">
+	<div>
+		<div class="clickable-section" data-name="{{ payment.name }}">
+			<div class="col-sm-1" style="padding-right: 0px">
+				<button
+					class="assign_payment btn btn-default btn-xs hidden-xs center-block"
+					data-name="{{ payment.name }}"
+					style="padding-top: 0px; padding-bottom: 0px;"
+				>{{ __("Assign") }}</button>
+			</div>
+			<div class="col-sm-2 ellipsis hidden-xs" style="padding-left: 0px;">
+				<a href="#Form/Payment Entry/{{ payment.name }}">{{ payment.name }}</a>
+			</div>
+			<div class="col-sm-2 ellipsis hidden-xs">
+				{{ payment.party }}
+			</div>
+			<div class="col-sm-2 ellipsis hidden-xs">
+				{{ payment.unallocated_amount }} {{ currency }}
+			</div>
+			<div class="col-sm-2 ellipsis hidden-xs">
+				{{ payment.posting_date }}
+			</div>
+			<div class="col-sm-3 ellipsis hidden-xs" style="white-space: normal;">
+				{{ payment.remarks}}
+			</div>
+		</div>
+	</div>
+</div>
+{% endfor %}

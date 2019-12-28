@@ -1,0 +1,28 @@
+{
+ "content": null,
+ "docstatus": 0,
+ "doctype": "Page",
+ "icon": "",
+ "idx": 0,
+ "modified_by": "Administrator",
+ "module": "ERPNextFinTS",
+ "name": "assign_payment_entries",
+ "owner": "Administrator",
+ "page_name": "assign_payment_entries",
+ "roles": [
+  {
+   "role": "System Manager"
+  },
+  {
+   "role": "Accounts Manager"
+  },
+  {
+   "role": "Accounts User"
+  }
+ ],
+ "script": null,
+ "standard": "Yes",
+ "style": null,
+ "system_page": 0,
+ "title": "Assign Payment Entries"
+}

@@ -71,3 +71,19 @@ def get_missing_bank_accounts():
     from erpnextfints.utils.bank_account_controller import \
         BankAccountController
     return BankAccountController().get_missing_bank_accounts()
+
+
+@frappe.whitelist()
+def add_payment_reference(payment_entry, sales_invoice):
+    """Add payment reference to payment entry for sales invoice.
+
+    Create new bank account and if missing a bank entry.
+    :param payment_entry: json formated payment_doc
+    :param sales_invoice: json formated bank information
+    :type payment_entry: str
+    :type sales_invoice: str
+    :return: Payment reference name
+    """
+    from erpnextfints.utils.assign_payment_controller import \
+        add_payment_reference
+    return add_payment_reference(payment_entry, sales_invoice)

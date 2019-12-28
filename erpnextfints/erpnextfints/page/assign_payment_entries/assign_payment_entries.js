@@ -32,32 +32,6 @@ erpnextfints.tools.assignWizard = class assignWizard {
 		const me = this;
 
 		me.page.show_menu();
-
-		/*
-		me.page.add_menu_item(__("Create All"), function() {
-			var items = erpnextfints.tools.assignWizardList.ref_items;
-
-			function createAllBankAccount(dataArray, index){
-				erpnextfints.iban_tools.setPartyBankAccount({
-					doc: dataArray[index],
-				}, function(e) {
-					if (e.message.status == true) {
-						// me.row.remove();
-						erpnextfints.tools.assignWizardList.ref_items.splice(index,1);
-						erpnextfints.tools.assignWizardList.render();
-						setTimeout(
-							function(){
-								frappe.hide_msgprint();
-								createAllBankAccount(dataArray, index + 1);
-							}, 700
-						);
-					}
-				});
-			}
-			createAllBankAccount(items, 0);
-
-		}, true);
-		*/
 	}
 
 	clear_page_content() {
@@ -121,18 +95,6 @@ erpnextfints.tools.AssignWizardTool = class AssignWizardTool extends frappe.view
 		});
 	}
 
-	/*
-	update_data(r) {
-		let data = r.message || [];
-
-		if (this.start === 0) {
-			this.data = data;
-		} else {
-			this.data = this.data.concat(data);
-		}
-	}
-	*/
-
 	get_row_call_args(customer) {
 		return {
 			method: "frappe.client.get_list",
@@ -157,8 +119,10 @@ erpnextfints.tools.AssignWizardTool = class AssignWizardTool extends frappe.view
 		$('[data-fieldname="status"]').remove();
 		me.data.map((value) => {
 			frappe.call(this.get_row_call_args(value.customer)).then(r => {
-				const row = $('<div class="list-row-container">').data("data", value).appendTo(me.$result).get(0);
-				new erpnextfints.tools.AssignWizardRow(row, value, r.message);
+				if(Array.isArray(r.message) && r.message.length){
+					const row = $('<div class="list-row-container">').data("data", value).appendTo(me.$result).get(0);
+					new erpnextfints.tools.AssignWizardRow(row, value, r.message);
+				}
 			});
 		});
 	}
@@ -186,8 +150,7 @@ erpnextfints.tools.AssignWizardRow = class AssignWizardRow {
 
 	bind_events() {
 		const me = this;
-		// assign_payment
-		// hide_row
+
 		$(me.row).on('click', '.hide_row', function() {
 			me.row.remove();
 		});
@@ -198,8 +161,13 @@ erpnextfints.tools.AssignWizardRow = class AssignWizardRow {
 					"sales_invoice":me.data.name,
 					"payment_entry":$(this).attr("data-name"),
 				},
-				callback(/* r */) {
-					me.row.remove();
+				callback(r) {
+					var payment_entry_ref = r.message;
+					if(payment_entry_ref.outstanding_amount == payment_entry_ref.allocated_amount){
+						me.row.remove();
+					}else{
+						erpnextfints.tools.assignWizardList.refresh();
+					}
 				}
 			});
 		});

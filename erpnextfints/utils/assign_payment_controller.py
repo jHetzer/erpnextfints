@@ -35,40 +35,35 @@ def add_payment_reference(payment_entry, sales_invoice):
             "outstanding_amount": salesInvoiceDoc.outstanding_amount,
         }
 
-        paid_amount = paymentEntryDoc.paid_amount
+        unallocated_amount = paymentEntryDoc.unallocated_amount
 
         # Adjust "Payment Entry Reference" "outstanding_amount" if
         # "Payment Entry" "paid_mount" is greater
-        if paid_amount > reference_details["outstanding_amount"]:
-            reference_details["allocated_amount"] = \
-                reference_details["outstanding_amount"]
-        else:
-            reference_details["allocated_amount"] = paid_amount
-        # reference_entry.save()
-        # reference_entry.save()
-        new_row = paymentEntryDoc.append("references")
-        new_row.docstatus = 1
-        new_row.update(reference_details)
+        if unallocated_amount > 0:
+            if unallocated_amount > reference_details["outstanding_amount"]:
+                reference_details["allocated_amount"] = \
+                    reference_details["outstanding_amount"]
+            else:
+                reference_details["allocated_amount"] = unallocated_amount
 
-        paymentEntryDoc.flags.ignore_validate_update_after_submit = True
-        paymentEntryDoc.setup_party_account_field()
-        paymentEntryDoc.set_missing_values()
-        paymentEntryDoc.set_amounts()
-        paymentEntryDoc.save()
-        # paymentEntryDoc.reload()
-        # paymentEntryDoc.validate()
-        if paymentEntryDoc.unallocated_amount == 0:
-            paymentEntryDoc.submit()
-        '''
-        paymentEntryDoc.append("references", reference_entry)
-        paymentEntryDoc.allocate_payment_amount = 1
-        paymentEntryDoc.unallocated_amount -= \
-            reference_entry.allocated_amount
+            new_row = paymentEntryDoc.append("references")
+            new_row.docstatus = 1
+            new_row.update(reference_details)
 
-        else:
+            paymentEntryDoc.flags.ignore_validate_update_after_submit = True
+            paymentEntryDoc.setup_party_account_field()
+            paymentEntryDoc.set_missing_values()
+            paymentEntryDoc.set_amounts()
             paymentEntryDoc.save()
-        '''
-        return True
+
+            if paymentEntryDoc.unallocated_amount == 0:
+                paymentEntryDoc.submit()
+
+            return new_row
+        else:
+            frappe.msgprint(_(
+                "No unallocated amount found. Please refresh page"
+            ))
     except Exception as e:
         frappe.log_error(frappe.get_traceback())
         frappe.throw(_("Could not create payment reference: {0}").format(e))

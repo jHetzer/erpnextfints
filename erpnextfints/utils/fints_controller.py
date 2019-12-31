@@ -184,25 +184,26 @@ class FinTSController:
                 curr_doc.from_date,
                 curr_doc.to_date
             )
-            try:
-                save_file(
-                    fints_import + ".json",
-                    json.dumps(
-                        tansactions, ensure_ascii=False
-                    ).replace(",", ",\n").encode('utf8'),
-                    'FinTS Import',
-                    fints_import,
-                    folder='Home/Attachments/FinTS',
-                    decode=False,
-                    is_private=1,
-                    df=None
-                )
-            except Exception as e:
-                frappe.throw(_("Failed to attach file"), e)
 
             if(len(tansactions) == 0):
                 frappe.msgprint(_("No transcations found"))
             else:
+                try:
+                    save_file(
+                        fints_import + ".json",
+                        json.dumps(
+                            tansactions, ensure_ascii=False
+                        ).replace(",", ",\n").encode('utf8'),
+                        'FinTS Import',
+                        fints_import,
+                        folder='Home/Attachments/FinTS',
+                        decode=False,
+                        is_private=1,
+                        df=None
+                    )
+                except Exception as e:
+                    frappe.throw(_("Failed to attach file"), e)
+
                 if(len(tansactions) == 1):
                     curr_doc.start_date = tansactions[0]["date"]
                     curr_doc.end_date = tansactions[0]["date"]

@@ -85,5 +85,26 @@ def add_payment_reference(payment_entry, sales_invoice):
     :return: Payment reference name
     """
     from erpnextfints.utils.assign_payment_controller import \
-        add_payment_reference
-    return add_payment_reference(payment_entry, sales_invoice)
+        AssignmentController
+
+    return AssignmentController().add_payment_reference(
+        payment_entry,
+        sales_invoice
+    )
+
+
+@frappe.whitelist()
+def auto_assign_payments():
+    """Query assignable payments and create payment references.
+
+    Try to assign payments in 3 steps:
+    1. payment to sale assingment
+    2. multiple payments to sale assingment
+    3. payment to sale assingment
+
+    :return: List of assigned payments
+    """
+    from erpnextfints.utils.assign_payment_controller import \
+        AssignmentController
+
+    return AssignmentController().auto_assign_payments()

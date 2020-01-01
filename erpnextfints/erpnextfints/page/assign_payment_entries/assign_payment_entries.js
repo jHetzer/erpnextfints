@@ -32,6 +32,36 @@ erpnextfints.tools.assignWizard = class assignWizard {
 		const me = this;
 
 		me.page.show_menu();
+		me.page.add_menu_item(__("Assign All"), function() {
+			frappe.call({
+				method: "erpnextfints.utils.client.auto_assign_payments",
+				args: {},
+				callback: function(r) {
+					if(r.message.success === true ){
+						var result = [];
+						if(Array.isArray(r.message.payments) && r.message.payments.length ){
+							result.push(__("Assingment was successfull"));
+							r.message.payments.forEach(function(item) {
+								result.push(
+									__("Payment") + " " +
+									get_doc_link("Payment Entry",item.PaymentName) +
+									" " + __("from customer") + " " +
+									get_doc_link("Customer",item.CustomerName) + " " +
+									__("has been assinged to sale invoice") + " " +
+									get_doc_link("Sales Invoice",item.SaleName)
+								);
+							});
+						}else{
+							result.push(__("No payments were found for assignment"));
+						}
+						erpnextfints.tools.assignWizardList.refresh();
+						frappe.msgprint(result);
+					} else {
+						frappe.msgprint(__("Failed to assign payments"));
+					}
+				}
+			});
+		}, true);
 	}
 
 	clear_page_content() {
@@ -158,8 +188,8 @@ erpnextfints.tools.AssignWizardRow = class AssignWizardRow {
 			frappe.call({
 				method: "erpnextfints.utils.client.add_payment_reference",
 				args: {
-					"sales_invoice":me.data.name,
-					"payment_entry":$(this).attr("data-name"),
+					"sales_invoice": me.data.name,
+					"payment_entry": $(this).attr("data-name"),
 				},
 				callback(r) {
 					var payment_entry_ref = r.message;
@@ -173,3 +203,9 @@ erpnextfints.tools.AssignWizardRow = class AssignWizardRow {
 		});
 	}
 };
+
+function get_doc_link(doctype, name){
+	return '<a href="#Form/' + doctype + '/' +
+		name+'"><b>' +
+		name + `</b></a>`;
+}

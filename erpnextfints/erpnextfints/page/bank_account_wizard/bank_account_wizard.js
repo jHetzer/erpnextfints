@@ -44,26 +44,26 @@ erpnextfints.tools.bankWizard = class BankWizard {
 		me.page.show_menu();
 
 		me.page.add_menu_item(__("Create All"), function() {
-			var items = erpnextfints.tools.bankWizardList.ref_items;
-
-			function createAllBankAccount(dataArray, index){
+			function createAllBankAccount(data){
 				erpnextfints.iban_tools.setPartyBankAccount({
-					doc: dataArray[index],
+					doc: data[0],
 				}, function(e) {
 					if (e.message.status == true) {
 						// me.row.remove();
-						erpnextfints.tools.bankWizardList.ref_items.splice(index,1);
+						erpnextfints.tools.bankWizardList.ref_items.splice(0,1);
 						erpnextfints.tools.bankWizardList.render();
 						setTimeout(
 							function(){
 								frappe.hide_msgprint();
-								createAllBankAccount(dataArray, index + 1);
+								if(data.length > 0){
+									createAllBankAccount(data);
+								}
 							}, 700
 						);
 					}
 				});
 			}
-			createAllBankAccount(items, 0);
+			createAllBankAccount(erpnextfints.tools.bankWizardList.ref_items);
 
 		}, true);
 	}

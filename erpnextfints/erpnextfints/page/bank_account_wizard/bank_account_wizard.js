@@ -121,6 +121,10 @@ erpnextfints.tools.bankWizardTool = class BankWizardTool extends frappe.views.Ba
 		//
 	}
 
+	set_breadcrumbs() {
+		frappe.breadcrumbs.add("ERPNextFinTS");
+	}
+
 	make_standard_filters() {
 		//
 	}

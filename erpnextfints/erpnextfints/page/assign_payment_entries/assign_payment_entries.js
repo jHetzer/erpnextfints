@@ -108,6 +108,10 @@ erpnextfints.tools.AssignWizardTool = class AssignWizardTool extends frappe.view
 		//
 	}
 
+	set_breadcrumbs() {
+		frappe.breadcrumbs.add("ERPNextFinTS");
+	}
+
 	make_standard_filters() {
 		//
 	}

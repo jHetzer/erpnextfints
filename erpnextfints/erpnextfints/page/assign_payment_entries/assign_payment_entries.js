@@ -151,6 +151,8 @@ erpnextfints.tools.AssignWizardTool = class AssignWizardTool extends frappe.view
 		this.$result.find('.list-row-container').remove();
 		$('[data-fieldname="name"]').remove();
 		$('[data-fieldname="status"]').remove();
+		$('[data-fieldname="title"]').remove();
+
 		me.data.map((value) => {
 			frappe.call(this.get_row_call_args(value.customer)).then(r => {
 				if(Array.isArray(r.message) && r.message.length){

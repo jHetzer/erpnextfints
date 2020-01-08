@@ -164,6 +164,7 @@ erpnextfints.tools.bankWizardTool = class BankWizardTool extends frappe.views.Ba
 		this.$result.find('.list-row-container').remove();
 		$('[data-fieldname="name"]').remove();
 		$('[data-fieldname="payment_type"]').remove();
+		$('[data-fieldname="title"]').remove();
 
 		me.data.map((value) => {
 			if (me.ref_items.filter(item => (item.name === value.name)).length >

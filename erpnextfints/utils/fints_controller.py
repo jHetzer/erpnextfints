@@ -9,6 +9,7 @@ from dateutil.relativedelta import relativedelta
 from frappe.utils import now_datetime
 from frappe.utils.file_manager import save_file
 from erpnextfints.utils.import_payment import ImportPaymentEntry
+from erpnextfints.utils.assign_payment_controller import AssignmentController
 import frappe
 import json
 import mt940
@@ -236,9 +237,12 @@ class FinTSController:
             self.interactive.show_progress_realtime(
                 _("Payment entry import completed"), 100, reload=False
             )
+
+            auto_assignment = AssignmentController().auto_assign_payments()
             return {
                 "transactions": tansactions[:10],
-                "payments": new_payments
+                "payments": new_payments,
+                "assignment": auto_assignment
             }
         except Exception as e:
             frappe.throw(_(

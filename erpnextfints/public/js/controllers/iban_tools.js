@@ -43,24 +43,39 @@ erpnextfints.iban_tools = {
 		return /^([A-Z]{6}[A-Z2-9][A-NP-Z1-9])(X{3}|[A-WY-Z0-9][A-Z0-9]{2})?$/.test( value.toUpperCase() );
 	},
 	getBankDetailsByIBAN: function(iban,callback) {
-		var url = "https://openiban.com/v2/calculate/" +
-			iban.substring(0, 2) + "/" +
-			iban.substring(4, 12) + "/" +
-			"9999999999";
-		$.ajax({
-			url: url,
-			type: 'GET',
-			success: function(data){
-				if(data.valid){
-					callback(data);
-				}else{
+		const regex = /(?<=.{12})./gi;
+		// https://openiban.com/#additional-info
+		const supported_countries = [
+			"BE", // Belgium
+			"DE", // Germany
+			"NL", // Netherlands
+			"LU", // Luxembourg
+			"CH", // Switzerland
+			"AT", // Austria
+			"LI", // Liechtenstein
+		];
+		var ibanCountryCode = iban.substring(0, 2).toUpperCase();
+		if(supported_countries.indexOf(ibanCountryCode) > -1){
+			var url = "https://openiban.com/validate/" +
+				iban.replace(regex, "0") +
+				"?getBIC=true&validateBankCode=true";
+			$.ajax({
+				url: url,
+				type: 'GET',
+				success: function(data){
+					if(data.checkResults.bankCode){
+						callback(data);
+					}else{
+						frappe.throw(__("Could not fetch bank details"));
+					}
+				},
+				error: function(/* data */) {
 					frappe.throw(__("Could not fetch bank details"));
 				}
-			},
-			error: function(/* data */) {
-				frappe.throw(__("Could not fetch bank details"));
-			}
-		});
+			});
+		}else{
+			frappe.throw(__("Unsupported IBAN country code: {0}",["<b>"+ibanCountryCode+"</b>"]));
+		}
 	},
 	createPartyBankAccount: function(frm, bankInfo, resultCallback) {
 		frappe.call({

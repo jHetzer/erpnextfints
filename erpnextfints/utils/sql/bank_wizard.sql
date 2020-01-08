@@ -27,8 +27,6 @@ WHERE
   AND tPE.party IS NOT NULL
   AND tPE.iban IS NOT NULL
   AND tPE.sender IS NOT NULL
-  -- Only german banks are supported
-  AND tPE.iban LIKE 'DE%'
 GROUP BY
   -- Remove duplicate entires
   tPE.iban,

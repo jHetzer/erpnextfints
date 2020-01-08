@@ -16,7 +16,7 @@ def import_fints_transactions(fints_import, fints_login, user_scope):
     :type fints_import: str
     :type fints_login: str
     :type user_scopet: str
-    :return: List of max 10 transcations and all new payment entries
+    :return: List of max 10 transactions and all new payment entries
     """
     from erpnextfints.utils.fints_controller import FinTSController
     interactive = {"docname": user_scope, "enabled": True}

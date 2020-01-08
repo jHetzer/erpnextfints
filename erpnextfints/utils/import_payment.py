@@ -54,7 +54,7 @@ class ImportPaymentEntry:
         total_transaction = len(fints_transaction)
         for idx, t in enumerate(fints_transaction):
             self.interactive.show_progress_realtime(
-                _("Query transcation {0} of {1}").format(
+                _("Query transaction {0} of {1}").format(
                     idx + 1,
                     total_transaction
                 ),

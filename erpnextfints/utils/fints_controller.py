@@ -132,10 +132,10 @@ class FinTSController:
         )
 
     def get_fints_transactions(self, start_date=None, end_date=None):
-        """Get FinTS transcations.
+        """Get FinTS transactions.
 
-        The code is not allowing to fetch transcation which are older
-        than 90 days. Also only transcation from atleast one day ago can be
+        The code is not allowing to fetch transaction which are older
+        than 90 days. Also only transaction from atleast one day ago can be
         fetched
 
         :param start_date: Date to start the fetch
@@ -174,11 +174,11 @@ class FinTSController:
 
         :param fints_import: fints_import doc name
         :type fints_import: str
-        :return: List of max 10 transcations and all new payment entries
+        :return: List of max 10 transactions and all new payment entries
         """
         try:
             self.interactive.show_progress_realtime(
-                _("Start transcation import"), 40, reload=False
+                _("Start transaction import"), 40, reload=False
             )
             curr_doc = frappe.get_doc("FinTS Import", fints_import)
             new_payments = None
@@ -188,7 +188,7 @@ class FinTSController:
             )
 
             if(len(tansactions) == 0):
-                frappe.msgprint(_("No transcations found"))
+                frappe.msgprint(_("No transaction found"))
             else:
                 try:
                     save_file(

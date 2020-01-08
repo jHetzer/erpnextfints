@@ -1,18 +1,25 @@
+<style>
+	@media (max-width: 767px) {
+		.list-xs-height{
+			height: auto
+		};
+	}
+</style>
 <div class="payment-assign-wizard-header">
 	<div class="level list-row list-row-head text-muted small">
-		<div class="col-sm-3 ellipsis hidden-xs">
+		<div class="col-sm-3 ellipsis">
 			{{ __("Name") }}
 		</div>
 		<div class="col-sm-2 ellipsis hidden-xs">
 			{{ __("Customer") }}
 		</div>
 		<div class="col-sm-2 ellipsis hidden-xs">
-			{{ __("Amount") }}
+			{{ __("Outstanding Amount") }}
 		</div>
-		<div class="col-sm-2 ellipsis">
+		<div class="col-sm-2 ellipsis hidden-xs">
 			{{ __("Posting Date") }}
 		</div>
-		<div class="col-sm-2 ellipsis list-subject">
+		<div class="col-sm-2 ellipsis list-subject hidden-xs">
 			{{ __("Due Date") }}
 		</div>
 		<!-- <div class="col-sm-1 ellipsis level-right">

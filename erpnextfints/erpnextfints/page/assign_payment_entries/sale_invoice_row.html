@@ -1,22 +1,22 @@
-<div class="list-row payment-assign-wizard-item">
+<div class="list-row payment-assign-wizard-item list-xs-height">
 	<div>
 		<div class="clickable-section" data-name="{{ name }}">
-			<div class="col-sm-3 ellipsis hidden-xs">
+			<div class="col-sm-3 ellipsis">
 				<a href="#Form/Sales Invoice/{{ name }}">{{ name }}</a>
 			</div>
 			<div class="col-sm-2 ellipsis hidden-xs">
 				{{ customer }}
 			</div>
-			<div class="col-sm-2 ellipsis hidden-xs">
+			<div class="col-sm-2 ellipsis">
 				{{ outstanding_amount }} {{ currency}}
 			</div>
 			<div class="col-sm-2 ellipsis hidden-xs">
 				{{ posting_date }}
 			</div>
-			<div class="col-sm-2 ellipsis hidden-xs">
+			<div class="col-sm-2 ellipsis">
 				{{ due_date }}
 			</div>
-			<div class="col-sm-1" style="padding-right: 0px">
+			<div class="col-sm-1 hidden-xs" style="padding-right: 0px">
 				<button
 					class="hide_row btn btn-default btn-xs hidden-xs center-block"
 					data-name="{{ name }}"
@@ -27,26 +27,26 @@
 	</div>
 </div>
 {% for payment in payments %}
-<div class="list-row payment-assign-wizard-item" style="height: auto;">
+<div class="list-row payment-assign-wizard-item list-xs-height">
 	<div>
 		<div class="clickable-section" data-name="{{ payment.name }}">
 			<div class="col-sm-1" style="padding-right: 0px">
 				<button
-					class="assign_payment btn btn-default btn-xs hidden-xs center-block"
+					class="assign_payment btn btn-default btn-xs center-block"
 					data-name="{{ payment.name }}"
 					style="padding-top: 0px; padding-bottom: 0px;"
 				>{{ __("Assign") }}</button>
 			</div>
-			<div class="col-sm-2 ellipsis hidden-xs" style="padding-left: 0px;">
+			<div class="col-sm-2 ellipsis" style="padding-left: 0px;">
 				<a href="#Form/Payment Entry/{{ payment.name }}">{{ payment.name }}</a>
 			</div>
 			<div class="col-sm-2 ellipsis hidden-xs">
 				{{ payment.party }}
 			</div>
-			<div class="col-sm-2 ellipsis hidden-xs">
+			<div class="col-sm-2 ellipsis">
 				{{ payment.unallocated_amount }} {{ currency }}
 			</div>
-			<div class="col-sm-2 ellipsis hidden-xs">
+			<div class="col-sm-2 ellipsis">
 				{{ payment.posting_date }}
 			</div>
 			<div class="col-sm-3 ellipsis hidden-xs" style="white-space: normal;">

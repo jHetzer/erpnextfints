@@ -150,8 +150,10 @@ class FinTSController:
         if end_date is None:
             end_date = now_datetime().date() - relativedelta(days=1)
 
-        if (end_date - start_date).days >= 90:
-            raise NotImplementedError
+        if (now_datetime().date() - start_date).days >= 90:
+            raise NotImplementedError(
+                _("Start date more then 90 days in the past")
+            )
 
         with self.fints_connection:
             account = self.get_fints_account_by_iban(

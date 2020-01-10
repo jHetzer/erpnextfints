@@ -32,7 +32,7 @@ erpnextfints.tools.assignWizard = class assignWizard {
 		const me = this;
 
 		me.page.show_menu();
-		me.page.add_menu_item(__("Assign All"), function() {
+		me.page.add_menu_item(__("Auto assign"), function() {
 			frappe.call({
 				method: "erpnextfints.utils.client.auto_assign_payments",
 				args: {},
@@ -197,13 +197,9 @@ erpnextfints.tools.AssignWizardRow = class AssignWizardRow {
 					"sales_invoice": me.data.name,
 					"payment_entry": $(this).attr("data-name"),
 				},
-				callback(r) {
-					var payment_entry_ref = r.message;
-					if(payment_entry_ref.outstanding_amount == payment_entry_ref.allocated_amount){
-						me.row.remove();
-					}else{
-						erpnextfints.tools.assignWizardList.refresh();
-					}
+				callback(/* r */) {
+					// Refresh page after asignment
+					erpnextfints.tools.assignWizardList.refresh();
 				}
 			});
 		});

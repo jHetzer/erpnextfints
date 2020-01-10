@@ -24,10 +24,18 @@ frappe.ui.form.on('FinTS Import', {
 		);
 	},*/
 	refresh: function(frm) {
-		if(frm.doc.fints_login && frm.doc.docstatus == 0){
-			frm.page.set_primary_action(__("Start Import"), function() {
-				frm.events.call_import_transaction(frm);
-			}).addClass('btn btn-primary');
+		if(cur_frm.doc.__islocal == null){
+			frm.toggle_display("import_transaction",true);
+			if(frm.doc.fints_login && frm.doc.docstatus == 0){
+				frm.page.set_primary_action(__("Start Import"), function() {
+					frm.events.call_import_transaction(frm);
+				}).addClass('btn btn-primary');
+				frm.page.set_secondary_action(__("Save"), function() {
+					frm.save();
+				});
+			}
+		}else{
+			frm.toggle_display("import_transaction",false);
 		}
 	},
 	fints_login: function(frm) {
@@ -37,12 +45,16 @@ frappe.ui.form.on('FinTS Import', {
 	},
 	from_date: function(frm) {
 		if(frm.doc.fints_login){
-			frm.save();
+			if(frm.doc.from_date){
+				frm.save();
+			}
 		}
 	},
 	to_date: function(frm) {
 		if(frm.doc.fints_login){
-			frm.save();
+			if(frm.doc.to_date){
+				frm.save();
+			}
 		}
 	},
 	import_transaction: function(frm){
@@ -70,12 +82,8 @@ frappe.ui.form.on('FinTS Import', {
 				'user_scope': frm.docname,
 			},
 			callback: function(/* r */) {
-				// console.log(r);
 				frappe.hide_progress();
-			},
-			error: function(/* r */) {
-				// console.log(r);
-				frappe.hide_progress();
+				frm.reload_doc();
 			}
 		});
 	}

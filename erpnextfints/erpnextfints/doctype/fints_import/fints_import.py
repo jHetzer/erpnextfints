@@ -23,8 +23,7 @@ class FinTSImport(Document):
                 _("'{0}' is more then 90 days in the past").format(field_name)
             )
             return False
-        else:
-            return True
+        return True
 
     def before_save(self):
         status = True
@@ -39,10 +38,13 @@ class FinTSImport(Document):
                         "'From Date' needs to be further in the past"
                         " then 'To Date'"))
         if self.to_date is not None:
-            status = self.validate_past(self.to_date, "To Date")
+            if not self.validate_past(self.to_date, "To Date"):
+                status = False
 
+        if not status:
+            frappe.throw(_("Validation of dates failed"))
+            return status
         return status
 
     def validate(self):
-        if not self.before_save():
-            frappe.throw(_("Validation of dates failed"))
+        self.before_save()

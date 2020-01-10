@@ -2,20 +2,35 @@ SELECT
   tPE.*
 FROM
   `tabPayment Entry` AS tPE
-  LEFT JOIN `tabBank Account` AS tBA ON tPE.iban = tBA.iban
-  AND tPE.sender = tBA.account_name
-  LEFT JOIN `tabFinTS Login` as tFL ON tPE.party = tFL.default_customer
-  or tPE.party = tFL.default_supplier
 WHERE
-  tFL.name IS NULL
-  AND tBA.name IS NULL
+  -- Check "Bank Account" iban does not exist
+  NOT EXISTS (
+    SELECT
+      1
+    FROM
+      `tabBank Account` AS tBA
+    WHERE
+      tBA.iban = tPE.iban
+  )
+  AND NOT EXISTS (
+    -- Check "Payment Entry" is not a default customer/supplier
+    SELECT
+      1
+    FROM
+      `tabFinTS Login` AS tFL
+    WHERE
+      tFL.default_customer = tPE.party
+      OR tFL.default_supplier = tPE.party
+  )
   AND tPE.docstatus != 2
+  -- Check requeried information are available
   AND tPE.party IS NOT NULL
   AND tPE.iban IS NOT NULL
-  AND tPE.iban LIKE 'DE%'
   AND tPE.sender IS NOT NULL
 GROUP BY
-  iban,
-  sender
-HAVING
-  COUNT(tPE.iban) = 1;
+  -- Remove duplicate entires
+  tPE.iban,
+  tPE.party,
+  tPE.sender
+ORDER BY
+  tPE.party;

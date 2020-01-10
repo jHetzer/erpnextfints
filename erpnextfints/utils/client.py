@@ -16,7 +16,7 @@ def import_fints_transactions(fints_import, fints_login, user_scope):
     :type fints_import: str
     :type fints_login: str
     :type user_scopet: str
-    :return: List of max 10 transcations and all new payment entries
+    :return: List of max 10 transactions and all new payment entries
     """
     from erpnextfints.utils.fints_controller import FinTSController
     interactive = {"docname": user_scope, "enabled": True}
@@ -71,3 +71,40 @@ def get_missing_bank_accounts():
     from erpnextfints.utils.bank_account_controller import \
         BankAccountController
     return BankAccountController().get_missing_bank_accounts()
+
+
+@frappe.whitelist()
+def add_payment_reference(payment_entry, sales_invoice):
+    """Add payment reference to payment entry for sales invoice.
+
+    Create new bank account and if missing a bank entry.
+    :param payment_entry: json formated payment_doc
+    :param sales_invoice: json formated bank information
+    :type payment_entry: str
+    :type sales_invoice: str
+    :return: Payment reference name
+    """
+    from erpnextfints.utils.assign_payment_controller import \
+        AssignmentController
+
+    return AssignmentController().add_payment_reference(
+        payment_entry,
+        sales_invoice
+    )
+
+
+@frappe.whitelist()
+def auto_assign_payments():
+    """Query assignable payments and create payment references.
+
+    Try to assign payments in 3 steps:
+    1. payment to sale assingment
+    2. multiple payments to sale assingment
+    3. payment to sale assingment
+
+    :return: List of assigned payments
+    """
+    from erpnextfints.utils.assign_payment_controller import \
+        AssignmentController
+
+    return AssignmentController().auto_assign_payments()

@@ -30,5 +30,10 @@ def get_data():  # noqa: D103
             "name": "bank_account_wizard",
             "label": _("Bank Account Wizard"),
             "description": _("Create bank accounts for parties")
+        }, {
+            "type": "page",
+            "name": "assign_payment_entries",
+            "label": _("Assign Payment Entries"),
+            "description": _("Assign payment entries to sale invoices")
         }]
     }]

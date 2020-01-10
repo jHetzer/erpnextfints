@@ -9,6 +9,7 @@ from dateutil.relativedelta import relativedelta
 from frappe.utils import now_datetime
 from frappe.utils.file_manager import save_file
 from erpnextfints.utils.import_payment import ImportPaymentEntry
+from erpnextfints.utils.assign_payment_controller import AssignmentController
 import frappe
 import json
 import mt940
@@ -132,10 +133,10 @@ class FinTSController:
         )
 
     def get_fints_transactions(self, start_date=None, end_date=None):
-        """Get FinTS transcations.
+        """Get FinTS transactions.
 
-        The code is not allowing to fetch transcation which are older
-        than 90 days. Also only transcation from atleast one day ago can be
+        The code is not allowing to fetch transaction which are older
+        than 90 days. Also only transaction from atleast one day ago can be
         fetched
 
         :param start_date: Date to start the fetch
@@ -150,8 +151,10 @@ class FinTSController:
         if end_date is None:
             end_date = now_datetime().date() - relativedelta(days=1)
 
-        if (end_date - start_date).days >= 90:
-            raise NotImplementedError
+        if (now_datetime().date() - start_date).days >= 90:
+            raise NotImplementedError(
+                _("Start date more then 90 days in the past")
+            )
 
         with self.fints_connection:
             account = self.get_fints_account_by_iban(
@@ -172,11 +175,11 @@ class FinTSController:
 
         :param fints_import: fints_import doc name
         :type fints_import: str
-        :return: List of max 10 transcations and all new payment entries
+        :return: List of max 10 transactions and all new payment entries
         """
         try:
             self.interactive.show_progress_realtime(
-                _("Start transcation import"), 40, reload=False
+                _("Start transaction import"), 40, reload=False
             )
             curr_doc = frappe.get_doc("FinTS Import", fints_import)
             new_payments = None
@@ -184,25 +187,26 @@ class FinTSController:
                 curr_doc.from_date,
                 curr_doc.to_date
             )
-            try:
-                save_file(
-                    fints_import + ".json",
-                    json.dumps(
-                        tansactions, ensure_ascii=False
-                    ).replace(",", ",\n").encode('utf8'),
-                    'FinTS Import',
-                    fints_import,
-                    folder='Home/Attachments/FinTS',
-                    decode=False,
-                    is_private=1,
-                    df=None
-                )
-            except Exception as e:
-                frappe.throw(_("Failed to attach file"), e)
 
             if(len(tansactions) == 0):
-                frappe.msgprint(_("No transcations found"))
+                frappe.msgprint(_("No transaction found"))
             else:
+                try:
+                    save_file(
+                        fints_import + ".json",
+                        json.dumps(
+                            tansactions, ensure_ascii=False
+                        ).replace(",", ",\n").encode('utf8'),
+                        'FinTS Import',
+                        fints_import,
+                        folder='Home/Attachments/FinTS',
+                        decode=False,
+                        is_private=1,
+                        df=None
+                    )
+                except Exception as e:
+                    frappe.throw(_("Failed to attach file"), e)
+
                 if(len(tansactions) == 1):
                     curr_doc.start_date = tansactions[0]["date"]
                     curr_doc.end_date = tansactions[0]["date"]
@@ -233,9 +237,12 @@ class FinTSController:
             self.interactive.show_progress_realtime(
                 _("Payment entry import completed"), 100, reload=False
             )
+
+            auto_assignment = AssignmentController().auto_assign_payments()
             return {
                 "transactions": tansactions[:10],
-                "payments": new_payments
+                "payments": new_payments,
+                "assignment": auto_assignment
             }
         except Exception as e:
             frappe.throw(_(

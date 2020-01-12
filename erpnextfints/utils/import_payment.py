@@ -15,34 +15,22 @@ class ImportPaymentEntry:
         self.default_supplier = fints_login.default_supplier
         self.interactive = interactive
 
-    def get_party_by_value(self, sender, party_type, iban=None):
-        party = None
-        party_name = frappe.get_value(party_type, sender, 'name')
+    def get_party_by_value(self, sender_type, sender, iban=None):
+        party_name = None
 
-        if iban:
-            bank_accounts = frappe.get_list('Bank Account',
-                fields=['name', 'iban', 'party', 'party_type'],
-                filters={
-                    'iban': ('=', iban),
-                    'party_type': ('=', party_type),
-                    'party': ('!=', '')
-                }
-            )
-            if len(bank_accounts) == 1:
-                party = bank_accounts[0].party
+        if frappe.db.exists(sender_type, sender):
+            party_name = frappe.get_value(sender_type, sender, 'name')
 
         is_default = False
-        if not party:
-            if party_name:
-                party = party_name
-            elif party_type == 'Customer':
-                party = self.default_customer
+        if not party_name:
+            if sender_type == 'Customer':
+                party_name = self.default_customer
                 is_default = True
-            elif party_type == 'Supplier':
-                party = self.default_supplier
+            elif sender_type == 'Supplier':
+                party_name = self.default_supplier
                 is_default = True
 
-        return {'is_default': is_default, 'party': party}
+        return {'is_default': is_default, 'party': party_name}
 
     def fints_import(self, fints_transaction):
         # F841 total_items = len(fints_transaction)
@@ -100,7 +88,7 @@ class ImportPaymentEntry:
                 paid_from = self.fints_login.erpnext_account  # noqa: E501
                 remarkType = 'Receiver'
 
-            party = self.get_party_by_value(applicant_name, party_type, applicant_iban)
+            party = self.get_party_by_value(party_type, applicant_name, applicant_iban)
             if party['is_default']:
                 remarks = '{0} "{1}":\n{2} {3}'.format(remarkType, applicant_name, posting_text, purpose)
             else:

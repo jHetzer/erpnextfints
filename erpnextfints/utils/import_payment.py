@@ -57,7 +57,7 @@ class ImportPaymentEntry:
             # Convert to positive value if required
             amount = abs(float(t['amount']['amount']))
             status = t['status'].lower()
-            
+
             if amount == 0:
                 continue
 
@@ -83,12 +83,19 @@ class ImportPaymentEntry:
             purpose = t['purpose']
             applicant_iban = t['applicant_iban']
             applicant_bin = t['applicant_bin']
-            
+
             remarkType = ''
             paid_to = None
             paid_from = None
 
-            uniquestr = ','.join([date, amount, applicant_name, posting_text, purpose])
+            uniquestr = "{0},{1},{2},{3},{4}".format(
+                date,
+                amount,
+                applicant_name,
+                posting_text,
+                purpose
+            )
+
             transaction_id = hashlib.md5(uniquestr.encode()).hexdigest()
             if frappe.db.exists('Payment Entry', filters={'reference_no': transaction_id}):
                 continue

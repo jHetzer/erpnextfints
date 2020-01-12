@@ -16,8 +16,12 @@ class ImportPaymentEntry:
         self.interactive = interactive
 
     def get_party_by_value(self, sender, party_type, iban=None):
+        """
+        If there is a Bank Account with this `iban` for this `party_type`, return the corresponding party.
+        Else, look for a party of `party_type` named `sender`.
+        Else, use default party.
+        """
         party = None
-        party_name = frappe.get_value(party_type, sender, 'name')
 
         if iban:
             bank_accounts = frappe.get_list('Bank Account',
@@ -33,8 +37,8 @@ class ImportPaymentEntry:
 
         is_default = False
         if not party:
-            if party_name:
-                party = party_name
+            if frappe.db.exists(party_type, sender):
+                party = sender
             elif party_type == 'Customer':
                 party = self.default_customer
                 is_default = True

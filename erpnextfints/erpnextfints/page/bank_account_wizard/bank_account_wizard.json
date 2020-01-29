@@ -4,13 +4,23 @@
  "docstatus": 0,
  "doctype": "Page",
  "idx": 0,
- "modified": "2019-11-15 09:20:05.675857",
+ "modified": "2020-01-29 22:27:09.935098",
  "modified_by": "Administrator",
  "module": "ERPNextFinTS",
  "name": "bank_account_wizard",
  "owner": "Administrator",
  "page_name": "bank_account_wizard",
- "roles": [],
+ "roles": [
+  {
+   "role": "System Manager"
+  },
+  {
+   "role": "Accounts Manager"
+  },
+  {
+   "role": "Accounts User"
+  }
+ ],
  "script": null,
  "standard": "Yes",
  "style": null,

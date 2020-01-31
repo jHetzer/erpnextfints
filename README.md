@@ -16,6 +16,7 @@ Python 3.4 <\
     cd bench/project/folder
     bench get-app erpnextfints https://github.com/jHetzer/erpnextfints
     bench --site [sitename] install-app erpnextfints
+    bench --site [sitename] enable-scheduler   
 ```
 ## Features
 - [x] FinTS Login
@@ -30,7 +31,7 @@ Python 3.4 <\
 
 ## ToDo
  - [ ] Unit tests / Cypress-tests
- - [ ] Improve import logs
+ - [ ] Add "FinTS Import" import logs
  - [ ] Legal way to publish/get FinTS URL's
  [https://www.hbci-zka.de/register/bedingungen_bankenliste.htm](https://www.hbci-zka.de/register/bedingungen_bankenliste.htm)
  - [ ] ...

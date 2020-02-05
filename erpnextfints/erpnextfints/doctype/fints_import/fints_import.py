@@ -43,8 +43,6 @@ class FinTSImport(Document):
 
         if not status:
             frappe.throw(_("Validation of dates failed"))
-            return status
-        return status
 
     def validate(self):
         self.before_save()

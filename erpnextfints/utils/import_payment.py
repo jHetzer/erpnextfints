@@ -17,14 +17,18 @@ class ImportPaymentEntry:
 
     def get_party_by_value(self, sender, party_type, iban=None):
         """
-        If there is a Bank Account with this `iban` for this `party_type`, return the corresponding party.
+        Get party by sender or iban.
+
+        If there is a Bank Account with this `iban` for this `party_type`,
+        return the corresponding party.
         Else, look for a party of `party_type` named `sender`.
         Else, use default party.
         """
         party = None
 
         if iban:
-            bank_accounts = frappe.get_list('Bank Account',
+            bank_accounts = frappe.get_list(
+                'Bank Account',
                 fields=['name', 'iban', 'party', 'party_type'],
                 filters={
                     'iban': ('=', iban),
@@ -62,7 +66,10 @@ class ImportPaymentEntry:
                 continue
 
             if status not in ['c', 'd']:
-                frappe.log_error(_('Payment type not handled'), _('FinTS Import Error'))
+                frappe.log_error(
+                    _('Payment type not handled'),
+                    'FinTS Import Error'
+                )
                 continue
 
             if status == 'c' and not self.fints_login.enable_received:
@@ -73,8 +80,13 @@ class ImportPaymentEntry:
 
             txn_number = idx + 1
             progress = txn_number / total_transactions * 100
-            message = _('Query transaction {0} of {1}').format(txn_number, total_transactions)
-            self.interactive.show_progress_realtime(message, progress, reload=False)
+            message = _('Query transaction {0} of {1}').format(
+                txn_number,
+                total_transactions
+            )
+            self.interactive.show_progress_realtime(
+                message, progress, reload=False
+            )
 
             # date is in YYYY.MM.DD (json)
             date = t['date']
@@ -115,9 +127,16 @@ class ImportPaymentEntry:
                 paid_from = self.fints_login.erpnext_account  # noqa: E501
                 remarkType = 'Receiver'
 
-            party = self.get_party_by_value(applicant_name, party_type, applicant_iban)
+            party = self.get_party_by_value(
+                applicant_name, party_type, applicant_iban
+            )
             if party['is_default']:
-                remarks = '{0} "{1}":\n{2} {3}'.format(remarkType, applicant_name, posting_text, purpose)
+                remarks = '{0} "{1}":\n{2} {3}'.format(
+                    remarkType,
+                    applicant_name,
+                    posting_text,
+                    purpose
+                )
             else:
                 remarks = '{0} {1}'.format(posting_text, purpose)
 

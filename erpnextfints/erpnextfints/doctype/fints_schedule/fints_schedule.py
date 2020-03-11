@@ -7,6 +7,8 @@ import frappe
 from frappe.model.document import Document
 from dateutil.relativedelta import relativedelta
 from frappe.utils import now_datetime
+from frappe.utils.scheduler import is_scheduler_inactive
+from frappe import _
 from erpnextfints.utils.client import import_fints_transactions
 from erpnextfints.utils.fints_controller import FinTSController
 # import erpnextfints.erpnextfints.doctype.fints_import.fints_import as fin_imp
@@ -14,7 +16,12 @@ from erpnextfints.utils.fints_controller import FinTSController
 
 
 class FinTSSchedule(Document):
-    pass
+    def validate(self):
+        if is_scheduler_inactive():
+            frappe.throw(
+                _("Scheduler is inactive. Cannot import data."),
+                title=_("Scheduler Inactive")
+            )
 
 
 @frappe.whitelist()

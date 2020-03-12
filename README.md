@@ -16,6 +16,7 @@ Python 3.4 <\
     cd bench/project/folder
     bench get-app erpnextfints https://github.com/jHetzer/erpnextfints
     bench --site [sitename] install-app erpnextfints
+    bench --site [sitename] enable-scheduler   
 ```
 ## Features
 -  [x] FinTS Login
@@ -29,6 +30,7 @@ Python 3.4 <\
 -  [x] Payment / Sale auto assignment (unattended / wizard)
 
 ## ToDo
+
 -  [ ] Unit tests / Cypress-tests
 -  [ ] Improve import logs
 -  [ ] Legal way to publish/get FinTS URL's

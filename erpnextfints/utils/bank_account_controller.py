@@ -14,7 +14,8 @@ class BankAccountController:
     def __init__(self):
         self.cur_dir = os.path.dirname(__file__)
 
-    def new_bank_account(self, payment_doc, bankData):
+    @staticmethod
+    def new_bank_account(payment_doc, bankData):
         """Create new bank account.
 
         Create new bank account and if missing a bank entry.

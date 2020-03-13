@@ -16,7 +16,7 @@ from erpnextfints.utils.fints_controller import FinTSController
 
 
 class FinTSSchedule(Document):
-    def validate(self):  # pylint: no-self-use
+    def validate(self):  # pylint: disable=no-self-use
         if is_scheduler_inactive():
             frappe.throw(
                 _("Scheduler is inactive. Cannot import data."),

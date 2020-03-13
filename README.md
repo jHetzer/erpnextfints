@@ -1,5 +1,7 @@
 # ERPNextFinTS
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/4160a988f6f245b78917af5b6a717915)](https://app.codacy.com/manual/jHetzer/erpnextfints?utm_source=github.com&utm_medium=referral&utm_content=jHetzer/erpnextfints&utm_campaign=Badge_Grade_Dashboard)
+
 FinTS Connector for ERPNext (Germany)
 
 This app allows to import bank information from german banks into ERPNext.\

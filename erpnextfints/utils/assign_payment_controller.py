@@ -13,7 +13,8 @@ class AssignmentController:
     def __init__(self):
         self.cur_dir = os.path.dirname(__file__)
 
-    def _read_sqlFile(self, name):
+    @staticmethod
+    def __read_sqlFile(name):
         cur_dir = os.path.dirname(__file__)
         file_path = os.path.join(cur_dir, './sql/' + name)
         with open(file_path) as file:
@@ -27,7 +28,7 @@ class AssignmentController:
         :return: List of assignable payments
         """
         sqlFile = "payment_to_saleInvoice.sql"
-        return frappe.db.sql(self._read_sqlFile(sqlFile), as_dict=True)
+        return frappe.db.sql(self.__read_sqlFile(sqlFile), as_dict=True)
 
     def payments_to_saleInvoice(self):
         """Get many by one assignable payments.
@@ -35,7 +36,7 @@ class AssignmentController:
         :return: List of assignable payments
         """
         sqlFile = "payments_to_saleInvoice.sql"
-        return frappe.db.sql(self._read_sqlFile(sqlFile), as_dict=True)
+        return frappe.db.sql(self.__read_sqlFile(sqlFile), as_dict=True)
 
     def auto_assign_payments(self):
         """Query assignable payments and create payment references.
@@ -85,7 +86,8 @@ class AssignmentController:
                     }
         return {'success': True, 'payments': matched_payments}
 
-    def add_payment_reference(self, payment_entry, sales_invoice):
+    @staticmethod
+    def add_payment_reference(payment_entry, sales_invoice):
         """Add payment reference to payment entry for sales invoice.
 
         Create new bank account and if missing a bank entry.

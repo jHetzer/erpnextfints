@@ -80,17 +80,17 @@ class FinTSController:
                     "Could not load sepa accounts with error:<br>{0}"
                 ).format(e))
 
-    def __get_fints_account_by_property(self, property, value):
+    def __get_fints_account_by_key(self, key, value):
         try:
             account = None
             for acc in self.fints_accounts:
-                if getattr(acc, property) == value:
+                if getattr(acc, key) == value:
                     account = acc
                     break
         except AttributeError:
             frappe.throw(_(
-                "SEPA account object has no property '{0}'"
-            ).format(property))
+                "SEPA account object has no key '{0}'"
+            ).format(key))
         # Account can be None
         return account
 
@@ -118,7 +118,7 @@ class FinTSController:
         :type iban: str
         :return: SEPAAccount
         """
-        return self.__get_fints_account_by_property("iban", iban)
+        return self.__get_fints_account_by_key("iban", iban)
 
     def get_fints_account_by_nr(self, account_nr):
         """Get FinTS account by account number.
@@ -127,7 +127,7 @@ class FinTSController:
         :type account_nr: str
         :return: SEPAAccount
         """
-        return self.__get_fints_account_by_property(
+        return self.__get_fints_account_by_key(
             "accountnumber",
             account_nr
         )

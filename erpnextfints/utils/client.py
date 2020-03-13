@@ -74,6 +74,20 @@ def get_missing_bank_accounts():
 
 
 @frappe.whitelist()
+def has_page_permission(page_name):
+    """Check if user has permission for a page doctype.
+
+    Based on frappe/desk/desk_page.py
+    :param page_doc: page doctype object
+    :type page_doc: page doctyp
+    :return: Boolean
+    """
+    from erpnextfints.utils.bank_account_controller import \
+        has_page_permission
+    return has_page_permission(page_name)
+
+
+@frappe.whitelist()
 def add_payment_reference(payment_entry, sales_invoice):
     """Add payment reference to payment entry for sales invoice.
 

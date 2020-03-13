@@ -3,7 +3,7 @@
 # See license.txt
 from __future__ import unicode_literals
 
-import frappe  # noqa: F401
+import frappe  # noqa: F401 # pylint: disable=unused-import
 import unittest
 
 

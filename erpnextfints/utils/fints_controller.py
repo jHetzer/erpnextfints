@@ -184,10 +184,23 @@ class FinTSController:
             )
             curr_doc = frappe.get_doc("FinTS Import", fints_import)
             new_payments = None
-            tansactions = self.get_fints_transactions(
-                curr_doc.from_date,
-                curr_doc.to_date
-            )
+            if curr_doc.docstatus == 0:
+                tansactions = self.get_fints_transactions(
+                    curr_doc.from_date,
+                    curr_doc.to_date
+                )
+            else:
+                if curr_doc.file_url:
+                    content = get_file(curr_doc.file_url)[1]
+                    # Check content hash for file manipulations
+                    if curr_doc.file_hash == get_content_hash(content):
+                        tansactions = frappe.json.loads(
+                            content
+                        )
+                    else:
+                        raise ValueError('File hash does not match')
+                else:
+                    tansactions = frappe.json.loads("[]")
 
             if(len(tansactions) == 0):
                 frappe.msgprint(_("No transaction found"))

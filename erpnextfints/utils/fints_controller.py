@@ -245,6 +245,7 @@ class FinTSController:
                 "assignment": auto_assignment
             }
         except Exception as e:
+            self.interactive.close_progress_realtime()
             frappe.throw(_(
                 "Error parsing transactions<br>{0}"
             ).format(str(e)), frappe.get_traceback())

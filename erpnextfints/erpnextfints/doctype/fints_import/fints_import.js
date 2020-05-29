@@ -7,7 +7,7 @@ frappe.ui.form.on('FinTS Import', {
 	onload: function(frm) {
 		erpnextfints.interactive.progressbar(frm);
 		if(frm.doc.docstatus == 1){
-			frm.toggle_display("import_transaction",false);
+			frm.set_df_property('import_transaction', 'label', __("Re-Import Transactions"));
 			frm.toggle_display("import_details_section",true);
 		}
 		if(frm.doc.docstatus == 0 && !(frm.doc.to_date)){
@@ -25,8 +25,8 @@ frappe.ui.form.on('FinTS Import', {
 	},*/
 	refresh: function(frm) {
 		if(cur_frm.doc.__islocal == null){
-			frm.toggle_display("import_transaction",true);
 			if(frm.doc.fints_login && frm.doc.docstatus == 0){
+				frm.toggle_display("import_transaction",true);
 				frm.page.set_primary_action(__("Start Import"), function() {
 					frm.events.call_import_transaction(frm);
 				}).addClass('btn btn-primary');

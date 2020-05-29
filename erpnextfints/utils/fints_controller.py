@@ -295,3 +295,17 @@ class FinTSInteractive:
                     "message": message,
                     "reload": False
                 }, user=frappe.session.user)
+
+    def close_progress_realtime(self):
+        """Close the progressbar on client side.
+
+        :return: None
+        """
+        if self.enabled:
+            frappe.publish_realtime(
+                "fints_progressbar", {
+                    "progress": 100,
+                    "docname": self.docname,
+                    "message": "",
+                    "reload": False
+                }, user=frappe.session.user)

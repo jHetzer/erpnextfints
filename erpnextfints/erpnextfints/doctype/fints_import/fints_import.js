@@ -24,6 +24,14 @@ frappe.ui.form.on('FinTS Import', {
 		);
 	},*/
 	refresh: function(frm) {
+		frm.add_custom_button(__('Donwload JSON File'), function () {
+			var base_url = "/api/method/erpnextfints.utils.client.get_fints_import_file/";
+			var filename = frm.doc.file_url.replace(/^.*[\\/]/, '');
+			window.open(
+				(base_url + filename + "?fints_import=" + frm.doc.name)
+				, '_blank'
+			);
+		});
 		if(cur_frm.doc.__islocal == null){
 			if(frm.doc.fints_login && frm.doc.docstatus == 0){
 				frm.toggle_display("import_transaction",true);

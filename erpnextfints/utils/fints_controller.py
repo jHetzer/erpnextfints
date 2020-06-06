@@ -95,6 +95,19 @@ class FinTSController:
         # Account can be None
         return account
 
+    def get_fints_import_file_content(self, fints_import):
+        if fints_import.file_url:
+            content = get_file(fints_import.file_url)[1]
+            # Check content hash for file manipulations
+            if fints_import.file_hash == get_content_hash(content):
+                return frappe.json.loads(
+                    content
+                )
+            else:
+                raise ValueError('File hash does not match')
+        else:
+            return frappe.json.loads('[]')
+
     def get_fints_connection(self):
         """Get the FinTS Connection object.
 
@@ -190,17 +203,7 @@ class FinTSController:
                     curr_doc.to_date
                 )
             else:
-                if curr_doc.file_url:
-                    content = get_file(curr_doc.file_url)[1]
-                    # Check content hash for file manipulations
-                    if curr_doc.file_hash == get_content_hash(content):
-                        tansactions = frappe.json.loads(
-                            content
-                        )
-                    else:
-                        raise ValueError('File hash does not match')
-                else:
-                    tansactions = frappe.json.loads("[]")
+                tansactions = self.get_fints_import_file_content(curr_doc)
 
             if(len(tansactions) == 0):
                 frappe.msgprint(_("No transaction found"))

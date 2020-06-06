@@ -6,11 +6,11 @@
 frappe.ui.form.on('FinTS Import', {
 	onload: function(frm) {
 		erpnextfints.interactive.progressbar(frm);
-		if(frm.doc.docstatus == 1){
+		if(frm.doc.docstatus === 1){
 			frm.set_df_property('import_transaction', 'label', __("Re-Import Transactions"));
 			frm.toggle_display("import_details_section",true);
 		}
-		if(frm.doc.docstatus == 0 && !(frm.doc.to_date)){
+		if(frm.doc.docstatus === 0 && !(frm.doc.to_date)){
 			frm.set_value(
 				"to_date",
 				frappe.datetime.add_days(frappe.datetime.nowdate(),-1)

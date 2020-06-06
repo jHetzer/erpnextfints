@@ -10,7 +10,7 @@ erpnextfints.interactive = {
 				if(data.reload && data.reload === true) {
 					frm.reload_doc();
 				}
-				if(data.progress==100) {
+				if(data.progress === 100) {
 					frappe.hide_progress();
 				} else {
 					frappe.show_progress(data.docname,data.progress,100,data.message);
@@ -18,4 +18,4 @@ erpnextfints.interactive = {
 			}
 		});
 	},
-}
+};

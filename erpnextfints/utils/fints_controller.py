@@ -96,7 +96,13 @@ class FinTSController:
         return account
 
     @staticmethod
-    def get_fints_import_file_content(self, fints_import):
+    def get_fints_import_file_content(fints_import):
+        """Get FinTS Import json file content as json.
+
+        :param fints_import: fints_import doc
+        :type fints_import: fints_import doc
+        :return: Transaction from file as json object list
+        """
         if fints_import.file_url:
             content = get_file(fints_import.file_url)[1]
             # Check content hash for file manipulations

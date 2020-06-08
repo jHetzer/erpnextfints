@@ -33,10 +33,10 @@ class FinTSController:
 
         :return: None
         """
-        self.interactive.show_progress_realtime(
-            _("Initialise connection"), 10, reload=False
-        )
         try:
+            self.interactive.show_progress_realtime(
+                _("Initialise connection"), 10, reload=False
+            )
             if not hasattr(self, 'fints_connection'):
                 password = self.fints_login.get_password('fints_password')
                 self.fints_connection = FinTS3PinTanClient(
@@ -271,7 +271,6 @@ class FinTSController:
                 "assignment": auto_assignment
             }
         except Exception as e:
-            self.interactive.close_progress_realtime()
             frappe.throw(_(
                 "Error parsing transactions<br>{0}"
             ).format(str(e)), frappe.get_traceback())

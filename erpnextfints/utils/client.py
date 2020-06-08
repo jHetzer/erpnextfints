@@ -46,6 +46,45 @@ def get_accounts(fints_login, user_scope):
 
 
 @frappe.whitelist()
+def get_fints_import_file(fints_import):
+    """View or download FinTS transactions file.
+
+    :param fints_import: fints_import doc name
+    :type fints_import: str
+    :return: FinTS transactions file
+    """
+    from erpnextfints.utils.fints_controller import FinTSController
+    from werkzeug.wrappers import Response
+    from frappe import _
+    from frappe.core.doctype.access_log.access_log import make_access_log
+
+    curr_doc = frappe.get_doc("FinTS Import", fints_import)
+
+    # check user permission
+    if not curr_doc.has_permission("read"):
+        frappe.throw(_("Not permitted"), frappe.PermissionError)
+        frappe.msgprint(frappe.get_user().name)
+
+    # build web response
+    response = Response()
+    response.data = frappe.as_json(
+        FinTSController(curr_doc.fints_login)
+            .get_fints_import_file_content(curr_doc)
+    )
+    response.mimetype = 'application/json'
+    response.charset = 'utf-8'
+
+    # record user fie access
+    make_access_log(
+        doctype='FinTS Import',
+        document=curr_doc.name,
+        file_type=curr_doc.file_url
+    )
+
+    return response
+
+
+@frappe.whitelist()
 def new_bank_account(payment_doc, bankData):
     """Create new bank account.
 

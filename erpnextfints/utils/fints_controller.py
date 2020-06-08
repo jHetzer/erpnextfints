@@ -6,8 +6,9 @@ from __future__ import unicode_literals
 from frappe import _
 from fints.client import FinTS3PinTanClient, FinTSClientMode
 from dateutil.relativedelta import relativedelta
-from frappe.utils import now_datetime
-from frappe.utils.file_manager import save_file
+from frappe.utils import now_datetime, get_files_path
+from frappe.utils.file_manager import save_file_on_filesystem, \
+    get_content_hash, get_file
 from erpnextfints.utils.import_payment import ImportPaymentEntry
 from erpnextfints.utils.assign_payment_controller import AssignmentController
 import frappe
@@ -32,10 +33,10 @@ class FinTSController:
 
         :return: None
         """
-        self.interactive.show_progress_realtime(
-            _("Initialise connection"), 10, reload=False
-        )
         try:
+            self.interactive.show_progress_realtime(
+                _("Initialise connection"), 10, reload=False
+            )
             if not hasattr(self, 'fints_connection'):
                 password = self.fints_login.get_password('fints_password')
                 self.fints_connection = FinTS3PinTanClient(
@@ -93,6 +94,20 @@ class FinTSController:
             ).format(key))
         # Account can be None
         return account
+
+    def get_fints_import_file_content(self, fints_import):
+        if fints_import.file_url:
+            content = get_file(fints_import.file_url)[1]
+            # Check content hash for file manipulations
+            if fints_import.file_hash == get_content_hash(content):
+                return frappe.json.loads(
+                    content,
+                    strict=False
+                )
+            else:
+                raise ValueError('File hash does not match')
+        else:
+            return frappe.json.loads('[]')
 
     def get_fints_connection(self):
         """Get the FinTS Connection object.
@@ -183,29 +198,41 @@ class FinTSController:
             )
             curr_doc = frappe.get_doc("FinTS Import", fints_import)
             new_payments = None
-            tansactions = self.get_fints_transactions(
-                curr_doc.from_date,
-                curr_doc.to_date
-            )
+            if curr_doc.docstatus == 0:
+                tansactions = self.get_fints_transactions(
+                    curr_doc.from_date,
+                    curr_doc.to_date
+                )
+            else:
+                tansactions = self.get_fints_import_file_content(curr_doc)
 
             if(len(tansactions) == 0):
                 frappe.msgprint(_("No transaction found"))
             else:
                 try:
-                    save_file(
-                        fints_import + ".json",
-                        json.dumps(
+                    if not curr_doc.file_url:
+                        file_content = json.dumps(
                             tansactions, ensure_ascii=False
-                        ).replace(",", ",\n").encode('utf8'),
-                        'FinTS Import',
-                        fints_import,
-                        folder='Home/Attachments/FinTS',
-                        decode=False,
-                        is_private=1,
-                        df=None
-                    )
+                        ).replace(",", ",\n").encode('utf8')
+                        frappe.create_folder(
+                            get_files_path(is_private=1)
+                            + "/" + self.fints_login.file_subdirectory
+                        )
+                        file_doc = save_file_on_filesystem(
+                            fname=(
+                                self.fints_login.file_subdirectory + "/"
+                                + fints_import + ".json"
+                            ),
+                            content=file_content,
+                            content_type=None,
+                            is_private=1
+                        )
+                        curr_doc.file_url = file_doc.get('file_url')
+                        curr_doc.file_hash = get_content_hash(file_content)
+
                 except Exception as e:
-                    frappe.throw(_("Failed to attach file"), e)
+                    frappe.msgprint(_("Failed to save transaction to file"))
+                    raise e
 
                 if(len(tansactions) == 1):
                     curr_doc.start_date = tansactions[0]["date"]
@@ -293,5 +320,19 @@ class FinTSInteractive:
                     "progress": progress,
                     "docname": self.docname,
                     "message": message,
+                    "reload": False
+                }, user=frappe.session.user)
+
+    def close_progress_realtime(self):
+        """Close the progressbar on client side.
+
+        :return: None
+        """
+        if self.enabled:
+            frappe.publish_realtime(
+                "fints_progressbar", {
+                    "progress": 100,
+                    "docname": self.docname,
+                    "message": "",
                     "reload": False
                 }, user=frappe.session.user)

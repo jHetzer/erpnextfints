@@ -101,7 +101,8 @@ class FinTSController:
             # Check content hash for file manipulations
             if fints_import.file_hash == get_content_hash(content):
                 return frappe.json.loads(
-                    content
+                    content,
+                    strict=False
                 )
             else:
                 raise ValueError('File hash does not match')

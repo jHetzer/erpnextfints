@@ -95,6 +95,7 @@ class FinTSController:
         # Account can be None
         return account
 
+    @staticmethod
     def get_fints_import_file_content(self, fints_import):
         if fints_import.file_url:
             content = get_file(fints_import.file_url)[1]

@@ -50,7 +50,11 @@
 				{{ payment.posting_date }}
 			</div>
 			<div class="col-sm-3 ellipsis hidden-xs" style="white-space: normal;">
-				{{ payment.remarks}}
+				{% if payment.purpose %}
+					{{ payment.purpose }}
+				{% else %}
+				   {{ payment.remarks}}
+				{% endif %}
 			</div>
 		</div>
 	</div>

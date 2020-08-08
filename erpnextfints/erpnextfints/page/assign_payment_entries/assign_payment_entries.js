@@ -134,7 +134,7 @@ erpnextfints.tools.AssignWizardTool = class AssignWizardTool extends frappe.view
 			method: "frappe.client.get_list",
 			args: {
 				doctype: "Payment Entry",
-				fields: ["name","party","posting_date", "unallocated_amount","remarks"],
+				fields: ["name","party","posting_date", "unallocated_amount","remarks","purpose"],
 				filters: {
 					"docstatus":0,
 					"party":customer,

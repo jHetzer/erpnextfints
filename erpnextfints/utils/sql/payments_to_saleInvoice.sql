@@ -14,11 +14,6 @@ FROM
       tsi.`posting_date` AS SalePostingDate,
       tsi.`due_date` AS SalesDueDate,
       tpe.`posting_date` AS PaymentPostingDate,
-      REPLACE(
-        tpe.`remarks`,
-        CHAR(13),
-        '<br>'
-      ) AS Remarks,
       sum(tpe.`unallocated_amount`) OVER (PARTITION BY tsi.`name`) AS TotalAmount,
       count(*) OVER (PARTITION BY tpe.`name`) AS PaymentCount,
       count(*) OVER (PARTITION BY tsi.`name`) AS SalesCount

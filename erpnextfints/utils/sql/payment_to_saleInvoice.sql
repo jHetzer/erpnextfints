@@ -13,11 +13,6 @@ FROM
       tsi.`NAME` AS SaleName,
       tsi.`posting_date` AS SalePostingDate,
       tsi.`due_date` AS SalesDueDate,
-      replace(
-        tpe.`remarks`,
-        char(13),
-        '<br>'
-      ) AS remarks,
       count(*) OVER (PARTITION BY tpe.`NAME`) AS PaymentCount,
       count(*) OVER (PARTITION BY tsi.`NAME`) AS SalesCount
     FROM

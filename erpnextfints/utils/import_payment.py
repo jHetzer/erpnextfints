@@ -157,7 +157,7 @@ class ImportPaymentEntry:
                 'paid_to': paid_to,
                 'paid_from': paid_from,
                 'party': party['party'],
-                'remarks': remarks
+                'purpose': ' '.join(remarks.split())
             })
             payment_entry.insert()
             self.payment_entries.append(payment_entry)

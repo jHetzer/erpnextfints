@@ -94,6 +94,27 @@ class FinTSController:
         # Account can be None
         return account
 
+    @staticmethod
+    def get_fints_import_file_content(fints_import):
+        """Get FinTS Import json file content as json.
+
+        :param fints_import: fints_import doc
+        :type fints_import: fints_import doc
+        :return: Transaction from file as json object list
+        """
+        if fints_import.file_url:
+            content = get_file(fints_import.file_url)[1]
+            # Check content hash for file manipulations
+            if fints_import.file_hash == get_content_hash(content):
+                return frappe.json.loads(
+                    content,
+                    strict=False
+                )
+            else:
+                raise ValueError('File hash does not match')
+        else:
+            return frappe.json.loads('[]')
+
     def get_fints_connection(self):
         """Get the FinTS Connection object.
 

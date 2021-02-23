@@ -17,7 +17,7 @@ erpnextfints.iban_tools = {
 		};
 		// var iban = String(input).toUpperCase().replace(/[^A-Z0-9]/g, ''), // keep only alphanumeric characters
 		var iban = String(input).toUpperCase(), // keep only alphanumeric characters
-			code = iban.match(/^([A-Z]{2})(\d{2})([A-Z\d]+)$/), // match and capture (1) the country code, (2) the check digits, and (3) the rest
+			code = iban.match(/^([A-Z]{2})(\\\\d{2})([A-Z\\\\d]+)$/), // match and capture (1) the country code, (2) the check digits, and (3) the rest
 			digits;
 		// check syntax and length
 		if (!code || iban.length !== CODE_LENGTHS[code[1]]) {

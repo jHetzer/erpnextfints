@@ -4,6 +4,8 @@
 *.swp
 .eslintcache
 package.json
+package-lock.json
+yarn.locak
 tags
 erpnextfints/docs/current
 node_modules

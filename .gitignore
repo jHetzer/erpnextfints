@@ -12,3 +12,11 @@ node_modules
 __pycache__
 tags
 erpnextfints/docs/current
+
+# VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace

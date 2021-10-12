@@ -4,7 +4,19 @@
 *.swp
 .eslintcache
 package.json
+package-lock.json
+yarn.locak
 tags
 erpnextfints/docs/current
 node_modules
 __pycache__
+tags
+erpnextfints/docs/current
+
+# VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace

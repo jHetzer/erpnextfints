@@ -1,3 +1,3 @@
-frappe
+# frappe -- https://github.com/frappe/frappe is installed via 'bench init'
 erpnext
 fints>=3.0.0

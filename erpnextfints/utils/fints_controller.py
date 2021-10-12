@@ -3,11 +3,14 @@
 # For license information, please see license.txt
 
 from __future__ import unicode_literals
+
 from frappe import _
 from fints.client import FinTS3PinTanClient, FinTSClientMode
 from dateutil.relativedelta import relativedelta
 from frappe.utils import now_datetime
 from frappe.utils.file_manager import save_file
+from frappe.utils.file_manager import get_file
+from frappe.utils.file_manager import get_content_hash
 from erpnextfints.utils.import_payment import ImportPaymentEntry
 from erpnextfints.utils.assign_payment_controller import AssignmentController
 import frappe

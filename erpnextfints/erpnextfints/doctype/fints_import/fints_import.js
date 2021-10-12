@@ -6,11 +6,11 @@
 frappe.ui.form.on('FinTS Import', {
 	onload: function(frm) {
 		erpnextfints.interactive.progressbar(frm);
-		if(frm.doc.docstatus == 1){
+		if(frm.doc.docstatus === 1){
 			frm.toggle_display("import_transaction",false);
 			frm.toggle_display("import_details_section",true);
 		}
-		if(frm.doc.docstatus == 0 && !(frm.doc.to_date)){
+		if(frm.doc.docstatus === 0 && !(frm.doc.to_date)){
 			frm.set_value(
 				"to_date",
 				frappe.datetime.add_days(frappe.datetime.nowdate(),-1)
@@ -26,7 +26,7 @@ frappe.ui.form.on('FinTS Import', {
 	refresh: function(frm) {
 		if(cur_frm.doc.__islocal == null){
 			frm.toggle_display("import_transaction",true);
-			if(frm.doc.fints_login && frm.doc.docstatus == 0){
+			if(frm.doc.fints_login && frm.doc.docstatus === 0){
 				frm.page.set_primary_action(__("Start Import"), function() {
 					frm.events.call_import_transaction(frm);
 				}).addClass('btn btn-primary');

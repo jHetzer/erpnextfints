@@ -4,27 +4,29 @@
 
 from __future__ import unicode_literals
 
-from frappe import _
-from fints.client import FinTS3PinTanClient, FinTSClientMode
-from dateutil.relativedelta import relativedelta
-from frappe.utils import now_datetime
-from frappe.utils.file_manager import save_file
-from frappe.utils.file_manager import get_file
-from frappe.utils.file_manager import get_content_hash
-from erpnextfints.utils.import_payment import ImportPaymentEntry
-from erpnextfints.utils.assign_payment_controller import AssignmentController
 import frappe
 import json
 import mt940
+
+from dateutil.relativedelta import relativedelta
+from fints.client import FinTS3PinTanClient, FinTSClientMode
+
+from frappe import _
+from frappe.utils import now_datetime
+from frappe.utils.file_manager import (
+    save_file,
+    get_file,
+    get_content_hash,
+)
+from .import_payment import ImportPaymentEntry
+from .assign_payment_controller import AssignmentController
 
 
 class FinTSController:
     def __init__(self, fints_login_docname, interactive=False):
         self.fints_login = frappe.get_doc("FinTS Login", fints_login_docname)
         self.name = self.fints_login.name
-        self.interactive = FinTSInteractive(
-            interactive
-        )
+        self.interactive = FinTSInteractive(interactive)
         self.__init_fints_connection()
         self.__init_tan_processing()
         with self.fints_connection:
@@ -38,20 +40,21 @@ class FinTSController:
         self.interactive.show_progress_realtime(
             _("Initialise connection"), 10, reload=False
         )
+        if hasattr(self, "fints_connection"):
+            return
+
         try:
-            if not hasattr(self, 'fints_connection'):
-                password = self.fints_login.get_password('fints_password')
-                self.fints_connection = FinTS3PinTanClient(
-                    self.fints_login.blz,
-                    self.fints_login.fints_login,
-                    password,
-                    self.fints_login.fints_url,
-                    mode=FinTSClientMode.INTERACTIVE
-                )
+            self.fints_connection = FinTS3PinTanClient(
+                self.fints_login.blz,
+                self.fints_login.fints_login,
+                self.fints_login.get_password("fints_password"),
+                self.fints_login.fints_url,
+                mode=FinTSClientMode.INTERACTIVE,
+            )
         except Exception as e:
-            frappe.throw(_(
-                "Could not conntect to fints server with error<br>{0}"
-            ).format(e))
+            frappe.throw(
+                _("Could not conntect to fints server with error<br>{0}").format(e)
+            )
 
     def __init_tan_processing(self):
         """Show a progressbar on client side.
@@ -109,14 +112,14 @@ class FinTSController:
             content = get_file(fints_import.file_url)[1]
             # Check content hash for file manipulations
             if fints_import.file_hash == get_content_hash(content):
-                return frappe.json.loads(
+                return json.loads(
                     content,
                     strict=False
                 )
             else:
                 raise ValueError('File hash does not match')
         else:
-            return frappe.json.loads('[]')
+            return []
 
     def get_fints_connection(self):
         """Get the FinTS Connection object.
@@ -183,8 +186,8 @@ class FinTSController:
         with self.fints_connection:
             account = self.get_fints_account_by_iban(
                 self.fints_login.account_iban)
-            return frappe.json.loads(
-                frappe.json.dumps(
+            return json.loads(
+                json.dumps(
                     self.fints_connection.get_transactions(
                         account,
                         start_date,
@@ -231,17 +234,10 @@ class FinTSController:
                 except Exception as e:
                     frappe.throw(_("Failed to attach file"), e)
 
-                if(len(tansactions) == 1):
-                    curr_doc.start_date = tansactions[0]["date"]
-                    curr_doc.end_date = tansactions[0]["date"]
-                else:
-                    curr_doc.start_date = tansactions[0]["date"]
-                    curr_doc.end_date = tansactions[-1]["date"]
+                curr_doc.start_date = tansactions[0]["date"]
+                curr_doc.end_date = tansactions[-1]["date"]
 
-                importer = ImportPaymentEntry(
-                    self.fints_login,
-                    self.interactive
-                )
+                importer = ImportPaymentEntry(self.fints_login, self.interactive)
                 importer.fints_import(tansactions)
 
                 if len(importer.payment_entries) == 0:

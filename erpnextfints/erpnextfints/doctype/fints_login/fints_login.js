@@ -44,21 +44,10 @@ frappe.ui.form.on('FinTS Login', {
 		*/
 	},
 	enable_received: function(frm){
-		var field = "default_customer";
-		if(frm.doc.enable_received){
-			frm.toggle_reqd(field,true);
-		}else{
-			frm.toggle_reqd(field,false);
-		}
+		frm.toggle_reqd("default_customer", frm.doc.enable_received);
 	},
 	enable_pay: function(frm){
-		var field = "default_supplier";
-
-		if(frm.doc.enable_pay){
-			frm.toggle_reqd(field,true);
-		}else{
-			frm.toggle_reqd(field,false);
-		}
+		frm.toggle_reqd("default_supplier", frm.doc.enable_pay);
 	},
 	/* account_nr: function(frm) {
 		if(frm.doc.account_nr){

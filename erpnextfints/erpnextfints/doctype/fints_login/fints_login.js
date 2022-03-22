@@ -79,8 +79,7 @@ frappe.ui.form.on('FinTS Login', {
 		frappe.call({
 			method:"erpnextfints.utils.client.get_accounts",
 			args: {
-				'fints_login': frm.doc.name,
-				'user_scope': frm.doc.name
+				fints_login: frm.doc.name,
 			},
 			callback: function(r) {
 				// console.log(r)

@@ -7,41 +7,34 @@ import frappe
 
 
 @frappe.whitelist()
-def import_fints_transactions(fints_import, fints_login, user_scope):
+def import_fints_transactions(fints_import: str, fints_login: str):
     """Create payment entries by FinTS transactions.
 
     :param fints_import: fints_import doc name
     :param fints_login: fints_login doc name
-    :param user_scope: Current open doctype page
     :type fints_import: str
     :type fints_login: str
-    :type user_scopet: str
     :return: List of max 10 transactions and all new payment entries
     """
     from erpnextfints.utils.fints_controller import FinTSController
-    interactive = {"docname": user_scope, "enabled": True}
+    controller = FinTSController(fints_login)
 
-    return FinTSController(fints_login, interactive) \
-        .import_fints_transactions(fints_import)
+    return controller.import_fints_transactions(fints_import)
 
 
 @frappe.whitelist()
-def get_accounts(fints_login, user_scope):
+def get_accounts(fints_login: str):
     """Create payment entries by FinTS transactions.
 
     :param fints_login: fints_login doc name
-    :param user_scope: Current open doctype page
     :type fints_login: str
-    :type user_scopet: str
     :return: FinTS accounts json formated
     """
     from erpnextfints.utils.fints_controller import FinTSController
-    interactive = {"docname": user_scope, "enabled": True}
+    controller = FinTSController(fints_login)
 
     return {
-        "accounts": FinTSController(
-            fints_login,
-            interactive).get_fints_accounts()
+        "accounts": controller.get_fints_accounts()
     }
 
 

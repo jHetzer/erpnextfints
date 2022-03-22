@@ -20,13 +20,14 @@ from frappe.utils.file_manager import (
 )
 from .import_payment import ImportPaymentEntry
 from .assign_payment_controller import AssignmentController
+from .fints_interactive import show_progressbar
 
 
 class FinTSController:
-    def __init__(self, fints_login_docname, interactive=False):
+    def __init__(self, fints_login_docname):
         self.fints_login = frappe.get_doc("FinTS Login", fints_login_docname)
         self.name = self.fints_login.name
-        self.interactive = FinTSInteractive(interactive)
+        self.docname = fints_login_docname
         self.__init_fints_connection()
         self.__init_tan_processing()
         with self.fints_connection:
@@ -37,9 +38,7 @@ class FinTSController:
 
         :return: None
         """
-        self.interactive.show_progress_realtime(
-            _("Initialise connection"), 10, reload=False
-        )
+        show_progressbar(_("Initialise connection"), self.docname, 10)
         if hasattr(self, "fints_connection"):
             return
 
@@ -62,9 +61,7 @@ class FinTSController:
         :todo: Implement PSD2 requirements
         :return: None
         """
-        self.interactive.show_progress_realtime(
-            _("Initialise TAN settings"), 20, reload=False
-        )
+        show_progressbar(_("Initialise TAN settings"), self.docname, 20)
         self.fints_connection.fetch_tan_mechanisms()
 
         if self.fints_connection.init_tan_response:
@@ -75,9 +72,7 @@ class FinTSController:
 
         :return: None
         """
-        self.interactive.show_progress_realtime(
-            _("Loading accounts"), 30, reload=False
-        )
+        show_progressbar(_("Loading accounts"), self.docname, 30)
         if not hasattr(self, 'fints_accounts'):
             try:
                 self.fints_accounts = self.fints_connection.get_sepa_accounts()
@@ -133,9 +128,7 @@ class FinTSController:
 
         :return: List of SEPAAccount objects.
         """
-        self.interactive.show_progress_realtime(
-            _("Loading accounts completed"), 100, reload=False
-        )
+        show_progressbar(_("Loading accounts completed"), self.docname, 100)
         return self.fints_accounts
 
     def get_fints_account_by_iban(self, iban):
@@ -205,9 +198,7 @@ class FinTSController:
         :return: List of max 10 transactions and all new payment entries
         """
         try:
-            self.interactive.show_progress_realtime(
-                _("Start transaction import"), 40, reload=False
-            )
+            show_progressbar(_("Start transaction import"), self.docname, 40)
             curr_doc = frappe.get_doc("FinTS Import", fints_import)
             new_payments = None
             tansactions = self.get_fints_transactions(
@@ -237,7 +228,7 @@ class FinTSController:
                 curr_doc.start_date = tansactions[0]["date"]
                 curr_doc.end_date = tansactions[-1]["date"]
 
-                importer = ImportPaymentEntry(self.fints_login, self.interactive)
+                importer = ImportPaymentEntry(self.fints_login, self.docname)
                 importer.fints_import(tansactions)
 
                 if len(importer.payment_entries) == 0:
@@ -254,64 +245,16 @@ class FinTSController:
                 new_payments = importer.payment_entries
 
             curr_doc.submit()
-            self.interactive.show_progress_realtime(
-                _("Payment entry import completed"), 100, reload=False
-            )
-
+            show_progressbar(_("Payment entry import completed"), self.docname, 100)
             auto_assignment = AssignmentController().auto_assign_payments()
+
             return {
                 "transactions": tansactions[:10],
                 "payments": new_payments,
-                "assignment": auto_assignment
+                "assignment": auto_assignment,
             }
         except Exception as e:
-            frappe.throw(_(
-                "Error parsing transactions<br>{0}"
-            ).format(str(e)), frappe.get_traceback())
-
-
-class FinTSInteractive:
-    def __init__(self, configuration):
-        if not configuration:
-            self.docname = None
-            self.enabled = False
-        else:
-            self.docname = configuration["docname"]
-            self.enabled = configuration["enabled"]
-        self.progress = 0
-
-    def set_interactive_mode(self, enable):
-        """Turn on/off interactive mode.
-
-        :param enable: Turn on/off interactive mode
-        :type enable: bool
-        :return: None
-        """
-        self.enabled = enable
-
-    def get_interactive_mode(self):
-        """Get interactive mode.
-
-        :return: bool
-        """
-        return self.enabled
-
-    def show_progress_realtime(self, message, progress, reload=False):
-        """Show a progressbar on client side.
-
-        :param message: Message to display under the bar
-        :param progress: 0 - 100
-        :param reload: Reload the doc form, , defaults to False
-        :type message: str
-        :type progress: int
-        :type reload: bool, optional
-        :return: None
-        """
-        if self.enabled:
-            frappe.publish_realtime(
-                "fints_progressbar", {
-                    "progress": progress,
-                    "docname": self.docname,
-                    "message": message,
-                    "reload": False
-                }, user=frappe.session.user)
+            frappe.throw(
+                _("Error parsing transactions<br>{0}").format(str(e)),
+                frappe.get_traceback(),
+            )

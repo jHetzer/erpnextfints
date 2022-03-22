@@ -5,15 +5,17 @@ import hashlib
 import frappe
 from frappe import _
 
+from .fints_interactive import show_progressbar
+
 
 class ImportPaymentEntry:
-    def __init__(self, fints_login, interactive, allow_error=False):
+    def __init__(self, fints_login, docname, allow_error=False):
         self.allow_error = allow_error
         self.payment_entries = []
         self.fints_login = fints_login
         self.default_customer = fints_login.default_customer
         self.default_supplier = fints_login.default_supplier
-        self.interactive = interactive
+        self.docname = docname
 
     def get_party_by_value(self, sender, party_type, iban=None):
         """
@@ -54,7 +56,6 @@ class ImportPaymentEntry:
 
     def fints_import(self, fints_transaction):
         # F841 total_items = len(fints_transaction)
-        self.interactive.progress = 0
         total_transactions = len(fints_transaction)
 
         for idx, t in enumerate(fints_transaction):
@@ -84,9 +85,7 @@ class ImportPaymentEntry:
                 txn_number,
                 total_transactions
             )
-            self.interactive.show_progress_realtime(
-                message, progress, reload=False
-            )
+            show_progressbar(message, self.docname, progress)
 
             # date is in YYYY.MM.DD (json)
             date = t['date']

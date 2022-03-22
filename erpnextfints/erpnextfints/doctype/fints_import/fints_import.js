@@ -75,11 +75,10 @@ frappe.ui.form.on('FinTS Import', {
 	call_import_transaction: function(frm){
 		// frappe.show_progress(frm.docname,1,100,"Connect via FinTS")
 		frappe.call({
-			method:"erpnextfints.utils.client.import_fints_transactions",
+			method: "erpnextfints.utils.client.import_fints_transactions",
 			args: {
-				'fints_import': frm.docname,
-				'fints_login': frm.doc.fints_login,
-				'user_scope': frm.docname,
+				"fints_import": frm.docname,
+				"fints_login": frm.doc.fints_login,
 			},
 			callback: function(/* r */) {
 				frappe.hide_progress();

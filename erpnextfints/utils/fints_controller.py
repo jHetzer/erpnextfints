@@ -49,6 +49,7 @@ class FinTSController:
                 self.fints_login.fints_login,
                 self.fints_login.get_password("fints_password"),
                 self.fints_login.fints_url,
+                product_id=self.fints_login.product_id,
                 mode=FinTSClientMode.INTERACTIVE,
             )
         except Exception as e:

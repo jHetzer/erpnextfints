@@ -6,8 +6,6 @@ from __future__ import unicode_literals
 
 import frappe
 from frappe import _
-from frappe.core.doctype.file.file import create_new_folder
-
 
 def before_install():  # noqa: D103
     if frappe.utils.sys.version_info.major < 3:
@@ -17,5 +15,11 @@ def before_install():  # noqa: D103
 def after_install():  # noqa: D103
     folder = 'Home/Attachments'
     foldername = 'FinTS'
-    if not frappe.db.exists('File', {'name': "/".join([folder, foldername])}):
-        create_new_folder(foldername, folder)
+    if not frappe.db.exists("File", {"file_name": foldername, "is_folder": True, "folder": folder}):
+        folder = frappe.get_doc({
+            "doctype": "File",
+            "file_name": foldername,
+            "is_folder": True,
+            "folder": folder
+        })
+        folder.insert()

@@ -35,14 +35,17 @@ def get_accounts(fints_login, user_scope):
     :type user_scopet: str
     :return: FinTS accounts json formated
     """
-    from erpnextfints.utils.fints_controller import FinTSController
+    from erpnextfints.utils.fints_controller import FinTSController, TanInteractionRequired
+
     interactive = {"docname": user_scope, "enabled": True}
 
-    return {
-        "accounts": FinTSController(
-            fints_login,
-            interactive).get_fints_accounts()
-    }
+    try:
+        return {
+            "accounts": FinTSController(fints_login,
+                                        interactive).get_fints_accounts()
+        }
+    except TanInteractionRequired:
+        pass
 
 
 @frappe.whitelist()
@@ -122,3 +125,45 @@ def auto_assign_payments():
         AssignmentController
 
     return AssignmentController().auto_assign_payments()
+
+
+@frappe.whitelist()
+def resolve_tan_interaction(fints_login: str, values: str | dict):
+    """
+    When a user was requested to perform a 2FA, this method is called as a callback to resolve the interaction.
+
+    This method is called twice:
+    1. When the user is requested to choose the TAN mode
+    2. When the user is requested to mark the required action (confirm access or enter TAN) as performed
+
+    :param values: dict containing the interaction values
+        The following keys are expected:
+            possible_tan_modes: list of possible TAN modes
+            tan_mode: selected TAN mode
+            mfa_confirmation: Indicates Step 2, that the user performed the MFA (or entered a TAN)
+            tan: entered TAN (optional: if TAN needs to be entered for chosen tan_mode)
+    :return: doesn't return anything, but raises information via socket to the user
+    """
+    from erpnextfints.utils.fints_controller import FinTSController, TanInteractionRequired # , InitFailedException
+
+    if isinstance(values, str):
+        values = frappe.parse_json(values)
+
+    tan_mode = None
+
+    if values.get("possible_tan_modes") and values.get("tan_mode") and isinstance(values["possible_tan_modes"], list) and isinstance(values["tan_mode"], str):
+        tan_mode = values["tan_mode"]
+
+    tan_medium = values.get("tan_medium") if tan_mode else None
+
+    try:
+        if values.get("mfa_confirmation"):
+            # for tan generators, the TAN is permitted here (may also be empty for Mobile TAN 2.0)
+            FinTSController(fints_login, {"docname": fints_login, "enabled": True}, tan_mode=tan_mode, tan_medium=tan_medium, tan=values.get("tan"))
+
+        else:
+            # get index of tan_mode in possible_tan_modes
+            FinTSController(fints_login, {"docname": fints_login, "enabled": True}, tan_mode=tan_mode, tan_medium=tan_medium)
+
+    except TanInteractionRequired:
+        pass # will have triggered user interaction via socket

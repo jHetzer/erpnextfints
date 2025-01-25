@@ -30,11 +30,28 @@ frappe.ui.form.on('FinTS Login', {
 		// if(frm.fields_dict.account_nr.df.reqd && )
 		// frm.toggle_reqd("account_nr",true);
 		if(frm.doc.iban_list){
-			frm.set_df_property("account_iban","options",JSON.parse(frm.doc.iban_list));
-		}
-		if(!frm.doc.account_iban){
+			const ibanList = JSON.parse(frm.doc.iban_list).map(x => x.iban);
+			frm.set_df_property("account_iban", "options", ibanList);
+			frm.toggle_display("account_iban", true);
+		} else if(!frm.doc.account_iban){
 			frm.toggle_display("account_iban",false);
 		}
+
+		if (frm.doc.stored_client_state) {
+			frm.add_custom_button(__("Reset Connection"), function() {
+				frm.call('reset_connection').then(() => {
+					frm.reload_doc();
+				});
+			});
+		}
+
+		// TODO
+		// if (frm.doc.stored_tan_state) {
+		// 	frm.add_custom_button(__("Solve TAN Challenge"), function() {
+		// 		frm.call('solve_tan_challenge');
+		// 	});
+		// }
+
 		/*
 		if(!frm.doc.__unsaved && frm.doc.account_nr){
 			frm.toggle_display("transaction_settings_section",true)
@@ -72,16 +89,21 @@ frappe.ui.form.on('FinTS Login', {
 				'user_scope': frm.doc.name
 			},
 			callback: function(r) {
+				frm.set_value("account_iban","");
+
+				if (!r || !r?.message?.accounts) {
+					// if no qualified data is returned, the request was delayed and will be repeated later.
+					return;
+				}
 				// console.log(r)
 				frm.toggle_display("account_iban",true);
-				frm.set_value("account_iban","");
-				frm.set_value("failed_connection",0);
 
-				var ibanList = r.message.accounts.map(x => x[0]);
+				const ibanList = r.message.accounts.map(x => x.iban);
 				frm.set_df_property("account_iban","options",ibanList);
+				frm.set_value("account_iban", ibanList[0] || "");
+
 				// frm.toggle_reqd("account_nr",true);
 				// console.log(JSON.stringify(ibanList));
-				frm.set_value("iban_list", JSON.stringify(ibanList));
 				frm.toggle_reqd("account_iban",true);
 			},
 			error: function(/* r */) {
@@ -92,7 +114,6 @@ frappe.ui.form.on('FinTS Login', {
 
 				frappe.run_serially([
 					() => frm.set_value("account_iban",""),
-					() => frm.set_value("iban_list",""),
 					() => frm.set_value("failed_connection",frm.doc.failed_connection + 1),
 					() => frm.save(),
 				]);

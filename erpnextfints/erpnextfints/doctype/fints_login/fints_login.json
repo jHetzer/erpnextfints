@@ -18,6 +18,7 @@
   "get_accounts",
   "account_iban",
   "failed_connection",
+  "allowed_sync_days_in_past",
   "column_break_ydzf",
   "dialog_state_updated",
   "client_state_updated",
@@ -227,11 +228,18 @@
    "fieldtype": "Check",
    "label": "TAN State Decoupled",
    "read_only": 1
+  },
+  {
+   "default": "90",
+   "depends_on": "account_iban",
+   "fieldname": "allowed_sync_days_in_past",
+   "fieldtype": "Int",
+   "label": "Allowed Sync Days in the Past"
   }
  ],
  "icon": "fa fa-university",
  "links": [],
- "modified": "2025-01-25 13:38:38.237304",
+ "modified": "2025-01-27 22:00:24.021697",
  "modified_by": "Administrator",
  "module": "ERPNextFinTS",
  "name": "FinTS Login",

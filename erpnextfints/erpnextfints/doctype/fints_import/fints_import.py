@@ -19,9 +19,11 @@ class FinTSImport(Document):
                 _("'{0}' needs to be in the past").format(field_name)
             )
             return False
-        if (now_datetime().date() - date).days >= 90:
+
+        fints_login_doc = frappe.get_doc("FinTS Login", self.fints_login)
+        if (now_datetime().date() - date).days >= fints_login_doc.allowed_sync_days_in_past:
             frappe.msgprint(
-                _("'{0}' is more then 90 days in the past").format(field_name)
+                _("'{0}' is more then {1} days in the past").format(field_name, fints_login_doc.allowed_sync_days_in_past)
             )
             return False
         return True

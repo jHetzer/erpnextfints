@@ -18,6 +18,12 @@
   "get_accounts",
   "account_iban",
   "failed_connection",
+  "allowed_sync_days_in_past",
+  "column_break_ydzf",
+  "dialog_state_updated",
+  "client_state_updated",
+  "tan_state_updated",
+  "stored_tan_state_decoupled",
   "erpnext_account_settings_section",
   "company",
   "erpnext_account",
@@ -30,7 +36,10 @@
   "column_break_20",
   "enable_pay",
   "hidden_section",
-  "iban_list"
+  "iban_list",
+  "stored_client_state",
+  "stored_dialog_state",
+  "stored_tan_state"
  ],
  "fields": [
   {
@@ -174,14 +183,67 @@
    "fieldname": "product_id",
    "fieldtype": "Data",
    "label": "Product Id"
+  },
+  {
+   "fieldname": "tan_state_updated",
+   "fieldtype": "Datetime",
+   "label": "TAN State Updated",
+   "read_only": 1
+  },
+  {
+   "fieldname": "dialog_state_updated",
+   "fieldtype": "Datetime",
+   "label": "Dialog State Updated",
+   "read_only": 1
+  },
+  {
+   "fieldname": "stored_dialog_state",
+   "fieldtype": "Small Text",
+   "label": "Stored Dialog State"
+  },
+  {
+   "fieldname": "stored_tan_state",
+   "fieldtype": "Small Text",
+   "label": "Stored TAN State"
+  },
+  {
+   "fieldname": "client_state_updated",
+   "fieldtype": "Datetime",
+   "label": "Client State Updated",
+   "read_only": 1
+  },
+  {
+   "fieldname": "stored_client_state",
+   "fieldtype": "Small Text",
+   "label": "Stored Client State"
+  },
+  {
+   "fieldname": "column_break_ydzf",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "depends_on": "tan_state_updated",
+   "fieldname": "stored_tan_state_decoupled",
+   "fieldtype": "Check",
+   "label": "TAN State Decoupled",
+   "read_only": 1
+  },
+  {
+   "default": "90",
+   "depends_on": "account_iban",
+   "fieldname": "allowed_sync_days_in_past",
+   "fieldtype": "Int",
+   "label": "Allowed Sync Days in the Past"
   }
  ],
  "icon": "fa fa-university",
  "links": [],
- "modified": "2023-07-04 09:54:48.833536",
+ "modified": "2025-01-27 22:00:24.021697",
  "modified_by": "Administrator",
  "module": "ERPNextFinTS",
  "name": "FinTS Login",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {
@@ -206,5 +268,6 @@
  ],
  "sort_field": "modified",
  "sort_order": "ASC",
+ "states": [],
  "track_changes": 1
 }
